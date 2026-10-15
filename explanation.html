@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>指導教員への説明文（コピペ用）</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      padding: 20px;
+      line-height: 1.7;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    .card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    textarea {
+      width: 100%;
+      height: 380px;
+      font-size: 15px;
+      padding: 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      box-sizing: border-box;
+      line-height: 1.6;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      margin-top: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3 style="margin-top:0;">指導教員・院生への説明文</h3>
+    <textarea id="text">先生、工学部の先生が諦めた理由が分かりました。その先生のおっしゃる通り、一般向けの接続だとフィルタリングされてしまいます。
+
+実は Polar H10 には通信の出口が2つあります。
+
+1. 【一般用の表玄関（標準Bluetooth規格 0x180D）】
+工学部の先生がアクセスされた経路です。世の中のアプリやマイコンが通常使う規格で、H10内部のマイコンで平滑化・移動平均フィルタがかかった「加工済み心拍数」しか出てきません。そもそも心電図波形を送る仕様が規格自体に存在しないため、「フィルタされているから使えない」と諦められたのだと思います。
+
+2. 【研究用の裏口（Polar独自プロトコル PMD）】
+今回の PhysioLogger が使っている経路です。Polarが医療・研究用に用意した特殊なプロトコルで、特定の起動コマンドを送り込むことで内部フィルターを完全にバイパスします。胸の電極が拾った電圧（マイクロボルト）がそのまま毎秒130回の生データ（Raw ECG）としてストリーミング出力されます。
+
+PhysioLogger はこの研究用プロトコルから生データを直接受信しているため、工学部の先生が直面したフィルターの壁を完全に回避して、医療用ホルター心電計と同等の生データを取得・記録できています。</textarea>
+    <button onclick="copyText()">ワンタップで全文コピー</button>
+  </div>
+  <script>
+    function copyText() {
+      const textarea = document.getElementById('text');
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        alert('コピーしました！メッセージやメールに貼り付けられます。');
+      });
+    }
+  </script>
+</body>
+</html>
