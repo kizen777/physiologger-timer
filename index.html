@@ -27,7 +27,6 @@
       transition: background-color 0.6s ease;
     }
 
-    /* 上部ヘッダー */
     header {
       display: flex;
       justify-content: space-between;
@@ -53,7 +52,6 @@
       border-radius: 20px;
     }
 
-    /* プログレスバー */
     .progress-track {
       width: 100%;
       height: 5px;
@@ -71,12 +69,11 @@
       transition: width 0.3s linear, background-color 0.5s;
     }
 
-    /* 年代セレクター（10歳階級）＆ オーディオ設定バー */
     .config-bar {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .age-selector {
@@ -111,26 +108,34 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.08);
       padding: 6px 12px;
       border-radius: 10px;
       font-size: 12px;
+      gap: 8px;
     }
 
     .bgm-info {
       display: flex;
       align-items: center;
       gap: 6px;
-      color: #cbd5e1;
+      color: #e2e8f0;
       font-weight: 600;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    .bgm-controls {
+      display: flex;
+      gap: 6px;
+      align-items: center;
     }
 
     .bgm-toggle {
       border: 1px solid rgba(255, 255, 255, 0.25);
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(37, 99, 235, 0.35);
       color: #ffffff;
       font-size: 11px;
       font-weight: 700;
@@ -146,7 +151,6 @@
       color: #fca5a5;
     }
 
-    /* メイン表示エリア */
     main {
       flex: 1;
       display: flex;
@@ -155,15 +159,36 @@
       align-items: center;
       text-align: center;
       position: relative;
-      padding: 4px 0;
+      padding: 2px 0;
+    }
+
+    .phase-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .nav-mini-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .nav-mini-btn:active {
+      transform: scale(0.94);
     }
 
     .phase-badge {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       padding: 5px 14px;
       border-radius: 30px;
-      margin-bottom: 8px;
       letter-spacing: 0.5px;
       transition: all 0.5s ease;
     }
@@ -193,7 +218,7 @@
       border: 1px solid rgba(255, 255, 255, 0.15);
       padding: 4px 12px;
       border-radius: 20px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       font-variant-numeric: tabular-nums;
     }
 
@@ -203,11 +228,10 @@
       font-variant-numeric: tabular-nums;
       letter-spacing: -2px;
       line-height: 1;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       text-shadow: 0 4px 30px rgba(0,0,0,0.6);
     }
 
-    /* 次フェーズ予告カード (10秒前) */
     .next-banner {
       width: 100%;
       max-width: 440px;
@@ -255,7 +279,6 @@
       min-width: 44px;
     }
 
-    /* 5秒前カウントダウン巨大オーバーレイ */
     .countdown-overlay {
       position: absolute;
       top: 48%;
@@ -276,12 +299,11 @@
       transform: translate(-50%, -50%) scale(1);
     }
 
-    /* 下部コントローラー */
     footer {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      padding-top: 8px;
+      padding-top: 6px;
     }
 
     .btn-row {
@@ -331,7 +353,6 @@
       text-decoration: none;
     }
 
-    /* フェーズ別テーマカラー */
     body.theme-rest { background-color: #0b1e3b; }
     body.theme-rest .phase-name { color: #60a5fa; }
     body.theme-rest .phase-badge { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
@@ -386,14 +407,21 @@
         <button class="age-btn active" onclick="selectAge(70, this)">70代(古稀)</button>
       </div>
       <div class="audio-bar">
-        <div class="bgm-info" id="bgmTitleDisplay">🎵 BGM: Gymnopedie No. 1</div>
-        <button class="bgm-toggle" id="bgmToggleBtn" onclick="toggleBGM()">BGM: ON</button>
+        <div class="bgm-info" id="bgmTitleDisplay">🎵 BGM: Gymnopedie No. 1 (待機中)</div>
+        <div class="bgm-controls">
+          <button class="bgm-toggle" id="pacerToggleBtn" onclick="togglePacerBeat()">リズム音: ON</button>
+          <button class="bgm-toggle" id="bgmToggleBtn" onclick="toggleBGM()">BGM: ON</button>
+        </div>
       </div>
     </div>
   </div>
 
   <main>
-    <div class="phase-badge" id="phaseBadge">1 / 6 フェーズ</div>
+    <div class="phase-nav">
+      <button class="nav-mini-btn" onclick="changePhase(-1)">◀ 前へ</button>
+      <div class="phase-badge" id="phaseBadge">1 / 6 フェーズ</div>
+      <button class="nav-mini-btn" onclick="changePhase(1)">次へ ▶</button>
+    </div>
     <div class="phase-name" id="phaseName">座位安静</div>
     <div class="phase-rpe" id="phaseRpe">RPE 6〜7 (極めて楽 / ベースライン)</div>
     <div class="phase-target-pill" id="phaseTargetPill">目安HR: ~75 bpm | DFA α1 > 1.0</div>
@@ -422,15 +450,14 @@
     </div>
   </footer>
 
-  <!-- BGM Audio Element -->
-  <audio id="bgmPlayer" loop preload="auto" crossorigin="anonymous"></audio>
+  <!-- BGM Audio Element (crossorigin属性を外してCORSブロックを完全解消) -->
+  <audio id="bgmPlayer" loop preload="auto" playsinline></audio>
 
   <script>
-    // 年代別の運動ピッチ（歩/分 SPM）補正係数とTanaka式HRmax算出
-    let currentAge = 70; // デフォルト: 70代（古稀）
+    let currentAge = 70;
     let bgmEnabled = true;
+    let pacerBeatEnabled = true;
 
-    // 17分検証プロトコルの定義（Incompetech CC BY 4.0 楽曲付き）
     const PROTOCOL = [
       {
         id: 1,
@@ -442,7 +469,8 @@
         baseSpm: 0,
         alphaDesc: "α1 > 1.0",
         songTitle: "Gymnopedie No. 1",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Gymnopedie%20No%201.mp3"
+        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Gymnopedie%20No%201.mp3",
+        startOffset: 3 // 冒頭の無音区間をスキップして3秒目から再生
       },
       {
         id: 2,
@@ -454,7 +482,8 @@
         baseSpm: 100,
         alphaDesc: "α1 ≈ 0.90",
         songTitle: "Carefree",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Carefree.mp3"
+        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Carefree.mp3",
+        startOffset: 1
       },
       {
         id: 3,
@@ -466,7 +495,8 @@
         baseSpm: 135,
         alphaDesc: "α1 ≈ 0.75 (LT1)",
         songTitle: "Electro Cabello",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Electro%20Cabello.mp3"
+        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Electro%20Cabello.mp3",
+        startOffset: 0
       },
       {
         id: 4,
@@ -478,7 +508,8 @@
         baseSpm: 165,
         alphaDesc: "α1 ≈ 0.50 (LT2)",
         songTitle: "Movement Proposition",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Movement%20Proposition.mp3"
+        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Movement%20Proposition.mp3",
+        startOffset: 0
       },
       {
         id: 5,
@@ -490,7 +521,8 @@
         baseSpm: 85,
         alphaDesc: "α1 回復上昇",
         songTitle: "Bossa Antigua",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Bossa%20Antigua.mp3"
+        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Bossa%20Antigua.mp3",
+        startOffset: 1
       },
       {
         id: 6,
@@ -502,7 +534,8 @@
         baseSpm: 0,
         alphaDesc: "α1 > 1.0 復帰",
         songTitle: "Clean Soul",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Clean%20Soul.mp3"
+        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Clean%20Soul.mp3",
+        startOffset: 2
       }
     ];
 
@@ -513,9 +546,11 @@
     let elapsedTotalSeconds = 0;
     let isRunning = false;
     let timerInterval = null;
+    let pacerInterval = null;
 
     let audioCtx = null;
     const bgmPlayer = document.getElementById('bgmPlayer');
+    let currentLoadedUrl = "";
 
     function initAudio() {
       if (!audioCtx) {
@@ -526,16 +561,128 @@
       }
     }
 
+    // BGMのロードと再生（CORS制限なし）
     function loadAndPlayPhaseBGM(phaseIndex) {
       const phase = PROTOCOL[phaseIndex];
-      document.getElementById('bgmTitleDisplay').textContent = `🎵 BGM: ${phase.songTitle}`;
-      if (bgmPlayer.src !== phase.songUrl) {
+      const titleEl = document.getElementById('bgmTitleDisplay');
+
+      if (!bgmEnabled) {
+        titleEl.textContent = `🔇 BGM: OFF (${phase.songTitle})`;
+        bgmPlayer.pause();
+        return;
+      }
+
+      titleEl.textContent = `⏳ 読込中: ${phase.songTitle}...`;
+
+      if (currentLoadedUrl !== phase.songUrl) {
+        currentLoadedUrl = phase.songUrl;
         bgmPlayer.src = phase.songUrl;
+        bgmPlayer.load();
+        bgmPlayer.onloadedmetadata = () => {
+          if (phase.startOffset && bgmPlayer.duration > phase.startOffset) {
+            bgmPlayer.currentTime = phase.startOffset;
+          }
+        };
       }
-      bgmPlayer.volume = 0.65;
-      if (isRunning && bgmEnabled) {
-        bgmPlayer.play().catch(e => console.log("BGM play blocked:", e));
+
+      bgmPlayer.volume = 0.85;
+
+      if (isRunning) {
+        const playPromise = bgmPlayer.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            titleEl.textContent = `🎵 再生中: ${phase.songTitle}`;
+          }).catch(err => {
+            console.warn("Audio play warning:", err);
+            titleEl.textContent = `🎵 BGM: ${phase.songTitle} (リズム音動作中)`;
+          });
+        }
+      } else {
+        titleEl.textContent = `🎵 BGM: ${phase.songTitle} (待機中)`;
       }
+    }
+
+    bgmPlayer.addEventListener('playing', () => {
+      const phase = PROTOCOL[currentPhaseIndex];
+      document.getElementById('bgmTitleDisplay').textContent = `🎵 再生中: ${phase.songTitle}`;
+    });
+
+    // 年代に応じた推奨ピッチ（SPM）を計算してWeb Audioで心地よいペースメーカー音を鳴らす
+    function getTargetSpm(phase) {
+      if (phase.baseSpm === 0) return 0;
+      const ageOffset = Math.round((45 - currentAge) * 0.35);
+      return phase.baseSpm + ageOffset;
+    }
+
+    function startPacerLoop() {
+      stopPacerLoop();
+      if (!isRunning || !pacerBeatEnabled) return;
+
+      const phase = PROTOCOL[currentPhaseIndex];
+      const spm = getTargetSpm(phase);
+
+      if (spm > 0) {
+        // 運動フェーズ：足のピッチ（歩/分）に合わせた心地よいウッドブロック風リズム音
+        const intervalMs = (60 / spm) * 1000;
+        let stepCount = 0;
+        pacerInterval = setInterval(() => {
+          if (!isRunning || !pacerBeatEnabled) return;
+          playWoodblockTick(stepCount % 2 === 0);
+          stepCount++;
+        }, intervalMs);
+      } else {
+        // 安静フェーズ：4秒吸って6秒吐く（毎分6回）深呼吸ガイドの柔らかいチャイム
+        pacerInterval = setInterval(() => {
+          if (!isRunning || !pacerBeatEnabled) return;
+          playAmbientChord();
+        }, 5000);
+        playAmbientChord();
+      }
+    }
+
+    function stopPacerLoop() {
+      if (pacerInterval) {
+        clearInterval(pacerInterval);
+        pacerInterval = null;
+      }
+    }
+
+    // 運動ピッチ用の軽快なリズムパルス音
+    function playWoodblockTick(isAccent) {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(isAccent ? 660 : 520, audioCtx.currentTime);
+        gain.gain.setValueAtTime(isAccent ? 0.12 : 0.06, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.045);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+      } catch (e) {}
+    }
+
+    // 安静時用の心地よいアンビエント和音（Web Audio シンセ）
+    function playAmbientChord() {
+      try {
+        initAudio();
+        const freqs = [261.63, 329.63, 392.00, 493.88]; // Cmaj7 ヒーリングコード
+        freqs.forEach((f, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 0.8 + idx * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.0008, audioCtx.currentTime + 4.2);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 4.3);
+        });
+      } catch (e) {}
     }
 
     function toggleBGM() {
@@ -544,13 +691,27 @@
       if (bgmEnabled) {
         btn.textContent = "BGM: ON";
         btn.classList.remove('off');
-        if (isRunning) {
-          bgmPlayer.play().catch(e => console.log(e));
-        }
+        loadAndPlayPhaseBGM(currentPhaseIndex);
       } else {
         btn.textContent = "BGM: OFF";
         btn.classList.add('off');
         bgmPlayer.pause();
+        const phase = PROTOCOL[currentPhaseIndex];
+        document.getElementById('bgmTitleDisplay').textContent = `🔇 BGM: OFF (${phase.songTitle})`;
+      }
+    }
+
+    function togglePacerBeat() {
+      pacerBeatEnabled = !pacerBeatEnabled;
+      const btn = document.getElementById('pacerToggleBtn');
+      if (pacerBeatEnabled) {
+        btn.textContent = "リズム音: ON";
+        btn.classList.remove('off');
+        startPacerLoop();
+      } else {
+        btn.textContent = "リズム音: OFF";
+        btn.classList.add('off');
+        stopPacerLoop();
       }
     }
 
@@ -559,20 +720,37 @@
       document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('active'));
       btnEl.classList.add('active');
       updateUI();
+      if (isRunning) startPacerLoop();
     }
 
-    // Tanaka式 (208 - 0.7 * Age) による年代別目標心拍・ピッチ算出
+    // 任意のフェーズへスキップ・試聴する関数
+    function changePhase(delta) {
+      initAudio();
+      const nextIdx = currentPhaseIndex + delta;
+      if (nextIdx < 0 || nextIdx >= PROTOCOL.length) return;
+      currentPhaseIndex = nextIdx;
+      phaseSecondsRemaining = PROTOCOL[currentPhaseIndex].duration;
+      elapsedTotalSeconds = PROTOCOL.slice(0, currentPhaseIndex).reduce((acc, p) => acc + p.duration, 0);
+      updateUI();
+      if (isRunning) {
+        loadAndPlayPhaseBGM(currentPhaseIndex);
+        startPacerLoop();
+      } else {
+        // 停止中でも曲名を更新
+        const phase = PROTOCOL[currentPhaseIndex];
+        document.getElementById('bgmTitleDisplay').textContent = `🎵 BGM: ${phase.songTitle} (待機中)`;
+      }
+    }
+
     function getAgeAdjustedTargetText(phase) {
       const hrMax = Math.round(208 - 0.7 * currentAge);
       const hrLow = Math.round(hrMax * phase.hrRatio[0]);
       const hrHigh = Math.round(hrMax * phase.hrRatio[1]);
+      const targetSpm = getTargetSpm(phase);
 
-      if (phase.baseSpm === 0) {
+      if (targetSpm === 0) {
         return `目安HR: ${hrLow}〜${hrHigh} bpm | 目標 ${phase.alphaDesc}`;
       } else {
-        // 若年層ほど推奨ピッチ(歩/分)をわずかに高め、高齢層は安全域に調整
-        const ageOffset = Math.round((45 - currentAge) * 0.35);
-        const targetSpm = phase.baseSpm + ageOffset;
         return `目安HR: ${hrLow}〜${hrHigh} bpm | ピッチ: 約${targetSpm}歩/分 | ${phase.alphaDesc}`;
       }
     }
@@ -584,15 +762,13 @@
         const gain = audioCtx.createGain();
         osc.type = "sine";
         osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.45, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.12);
-      } catch (e) {
-        console.error(e);
-      }
+      } catch (e) {}
     }
 
     function playBeepLong() {
@@ -602,15 +778,13 @@
         const gain = audioCtx.createGain();
         osc.type = "sine";
         osc.frequency.setValueAtTime(1760, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.65, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.55);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.55);
-      } catch (e) {
-        console.error(e);
-      }
+      } catch (e) {}
     }
 
     function formatTime(sec) {
@@ -628,7 +802,6 @@
       document.getElementById('phaseRpe').textContent = phase.rpe;
       document.getElementById('phaseTargetPill').textContent = getAgeAdjustedTargetText(phase);
       document.getElementById('phaseTimer').textContent = formatTime(phaseSecondsRemaining);
-      document.getElementById('bgmTitleDisplay').textContent = `🎵 BGM: ${phase.songTitle}`;
 
       document.getElementById('totalTimeDisplay').textContent = `経過 ${formatTime(elapsedTotalSeconds)} / ${formatTime(TOTAL_SECONDS)}`;
       const progressPercent = (elapsedTotalSeconds / TOTAL_SECONDS) * 100;
@@ -639,20 +812,19 @@
       const nextCountdown = document.getElementById('nextCountdown');
       const countdownOverlay = document.getElementById('countdownOverlay');
 
-      // 10秒前予告 ＆ BGM自動ダッキング（時報を聞きやすくするためBGM音量を絞る）
       if (phaseSecondsRemaining <= 10 && currentPhaseIndex < PROTOCOL.length - 1) {
         const nextPhase = PROTOCOL[currentPhaseIndex + 1];
         nextTitle.textContent = `${nextPhase.id}/${PROTOCOL.length} ${nextPhase.name} (${nextPhase.rpe.split(' ')[0]})`;
         nextCountdown.textContent = phaseSecondsRemaining;
         nextBanner.classList.add('visible');
         if (phaseSecondsRemaining <= 5) {
-          bgmPlayer.volume = 0.2; // カウントダウン中はBGMを20%に減衰
+          bgmPlayer.volume = 0.2;
         } else {
-          bgmPlayer.volume = 0.4;
+          bgmPlayer.volume = 0.45;
         }
       } else {
         nextBanner.classList.remove('visible');
-        bgmPlayer.volume = 0.65;
+        bgmPlayer.volume = 0.85;
       }
 
       if (phaseSecondsRemaining <= 5 && phaseSecondsRemaining > 0 && currentPhaseIndex < PROTOCOL.length - 1) {
@@ -672,9 +844,11 @@
           currentPhaseIndex++;
           phaseSecondsRemaining = PROTOCOL[currentPhaseIndex].duration;
           loadAndPlayPhaseBGM(currentPhaseIndex);
+          startPacerLoop();
         } else {
           playBeepLong();
           clearInterval(timerInterval);
+          stopPacerLoop();
           isRunning = false;
           bgmPlayer.pause();
           document.getElementById('startBtn').textContent = "完了！";
@@ -699,13 +873,16 @@
       initAudio();
       if (isRunning) {
         clearInterval(timerInterval);
+        stopPacerLoop();
         isRunning = false;
         bgmPlayer.pause();
         document.getElementById('startBtn').textContent = "再開";
         document.getElementById('startBtn').className = "btn btn-primary";
       } else {
         isRunning = true;
+        playBeepShort(); // スタート確認フィードバック音
         loadAndPlayPhaseBGM(currentPhaseIndex);
+        startPacerLoop();
         document.getElementById('startBtn').textContent = "一時停止";
         document.getElementById('startBtn').className = "btn btn-secondary";
         timerInterval = setInterval(tick, 1000);
@@ -714,14 +891,17 @@
 
     function resetTimer() {
       clearInterval(timerInterval);
+      stopPacerLoop();
       isRunning = false;
       bgmPlayer.pause();
-      bgmPlayer.currentTime = 0;
+      currentLoadedUrl = "";
       currentPhaseIndex = 0;
       phaseSecondsRemaining = PROTOCOL[0].duration;
       elapsedTotalSeconds = 0;
       document.getElementById('startBtn').textContent = "スタート";
       document.getElementById('startBtn').className = "btn btn-primary";
+      const phase = PROTOCOL[0];
+      document.getElementById('bgmTitleDisplay').textContent = `🎵 BGM: ${phase.songTitle} (待機中)`;
       updateUI();
     }
 
