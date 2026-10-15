@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>PhysioLogger Protocol Timer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+      background-color: #0b0f19;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: env(safe-area-inset-top, 20px) 16px env(safe-area-inset-bottom, 20px) 16px;
+      overflow: hidden;
+      transition: background-color 0.6s ease;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 4px 6px 4px;
+    }
+
+    .app-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+
+    .total-time {
+      font-size: 15px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 3px;
+      margin: 8px 0 16px 0;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #38bdf8;
+      border-radius: 3px;
+      transition: width 0.3s linear, background-color 0.5s;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+
+    .phase-badge {
+      font-size: 18px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 30px;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+      transition: all 0.5s ease;
+    }
+
+    .phase-name {
+      font-size: clamp(40px, 11vw, 68px);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transition: color 0.5s ease;
+    }
+
+    .phase-rpe {
+      font-size: clamp(16px, 4vw, 22px);
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.75);
+      margin-bottom: 20px;
+    }
+
+    .phase-timer {
+      font-size: clamp(64px, 18vw, 110px);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 16px;
+      text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+    }
+
+    .next-banner {
+      width: 100%;
+      max-width: 440px;
+      padding: 12px 18px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .next-banner.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .next-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f59e0b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .next-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .next-countdown-badge {
+      font-size: 26px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.15);
+      padding: 4px 12px;
+      border-radius: 12px;
+      min-width: 48px;
+    }
+
+    .countdown-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.6);
+      font-size: clamp(140px, 40vw, 220px);
+      font-weight: 900;
+      color: #ffffff;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-shadow: 0 0 50px rgba(255, 255, 255, 0.8), 0 0 100px rgba(245, 158, 11, 0.6);
+      z-index: 50;
+    }
+
+    .countdown-overlay.pop {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    footer {
+      display: flex;
+      gap: 12px;
+      padding-top: 14px;
+      padding-bottom: 4px;
+    }
+
+    .btn {
+      flex: 1;
+      height: 56px;
+      border: none;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+    }
+
+    body.theme-rest { background-color: #0b1e3b; }
+    body.theme-rest .phase-name { color: #60a5fa; }
+    body.theme-rest .phase-badge { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    body.theme-rest .progress-bar { background: #3b82f6; }
+
+    body.theme-walk { background-color: #062e24; }
+    body.theme-walk .phase-name { color: #34d399; }
+    body.theme-walk .phase-badge { background: rgba(16, 185, 129, 0.2); color: #a7f3d0; }
+    body.theme-walk .progress-bar { background: #10b981; }
+
+    body.theme-jog { background-color: #381a03; }
+    body.theme-jog .phase-name { color: #fbbf24; }
+    body.theme-jog .phase-badge { background: rgba(245, 158, 11, 0.2); color: #fde68a; }
+    body.theme-jog .progress-bar { background: #f59e0b; }
+
+    body.theme-sprint { background-color: #3b0d11; }
+    body.theme-sprint .phase-name { color: #f87171; }
+    body.theme-sprint .phase-badge { background: rgba(239, 68, 68, 0.25); color: #fca5a5; }
+    body.theme-sprint .progress-bar { background: #ef4444; }
+
+    body.theme-active-rest { background-color: #1f2d08; }
+    body.theme-active-rest .phase-name { color: #a3e635; }
+    body.theme-active-rest .phase-badge { background: rgba(132, 204, 22, 0.2); color: #d9f99d; }
+    body.theme-active-rest .progress-bar { background: #84cc16; }
+
+    body.theme-final-rest { background-color: #161536; }
+    body.theme-final-rest .phase-name { color: #818cf8; }
+    body.theme-final-rest .phase-badge { background: rgba(99, 102, 241, 0.2); color: #c7d2fe; }
+    body.theme-final-rest .progress-bar { background: #6366f1; }
+  </style>
+</head>
+<body class="theme-rest">
+
+  <header>
+    <div class="app-title">PhysioLogger ペーサー</div>
+    <div class="total-time" id="totalTimeDisplay">経過 00:00 / 17:00</div>
+  </header>
+
+  <div class="progress-track">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <main>
+    <div class="phase-badge" id="phaseBadge">1 / 6 フェーズ</div>
+    <div class="phase-name" id="phaseName">座位安静</div>
+    <div class="phase-rpe" id="phaseRpe">RPE 6〜7 (極めて楽 / ベースライン)</div>
+    <div class="phase-timer" id="phaseTimer">03:00</div>
+
+    <div class="next-banner" id="nextBanner">
+      <div style="text-align: left;">
+        <div class="next-label">10秒後 次のアクション</div>
+        <div class="next-title" id="nextTitle">2/6 その場歩き (RPE 9〜10)</div>
+      </div>
+      <div class="next-countdown-badge" id="nextCountdown">10</div>
+    </div>
+
+    <div class="countdown-overlay" id="countdownOverlay">5</div>
+  </main>
+
+  <footer>
+    <button class="btn btn-secondary" id="resetBtn" onclick="resetTimer()">リセット</button>
+    <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">スタート</button>
+  </footer>
+
+  <script>
+    const PROTOCOL = [
+      { id: 1, name: "座位安静", duration: 180, rpe: "RPE 6〜7 (極めて楽 / ベースライン)", theme: "theme-rest" },
+      { id: 2, name: "その場歩き", duration: 180, rpe: "RPE 9〜10 (かなり楽 / 散歩ペース)", theme: "theme-walk" },
+      { id: 3, name: "その場小走り", duration: 180, rpe: "RPE 12〜13 (軽く弾むジョグ)", theme: "theme-jog" },
+      { id: 4, name: "ハイニー疾走", duration: 120, rpe: "RPE 15〜16 (腿上げダッシュ / きつい)", theme: "theme-sprint" },
+      { id: 5, name: "アクティブレスト", duration: 180, rpe: "RPE 8〜9 (ゆっくり歩き / 深呼吸)", theme: "theme-active-rest" },
+      { id: 6, name: "座位回復", duration: 180, rpe: "RPE 6〜7 (静かに着席 / 回復)", theme: "theme-final-rest" }
+    ];
+
+    const TOTAL_SECONDS = PROTOCOL.reduce((acc, p) => acc + p.duration, 0);
+
+    let currentPhaseIndex = 0;
+    let phaseSecondsRemaining = PROTOCOL[0].duration;
+    let elapsedTotalSeconds = 0;
+    let isRunning = false;
+    let timerInterval = null;
+
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playBeepShort() {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.12);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function playBeepLong() {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1760, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.55);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.55);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function updateUI() {
+      const phase = PROTOCOL[currentPhaseIndex];
+      document.body.className = phase.theme;
+
+      document.getElementById('phaseBadge').textContent = `${phase.id} / ${PROTOCOL.length} フェーズ`;
+      document.getElementById('phaseName').textContent = phase.name;
+      document.getElementById('phaseRpe').textContent = phase.rpe;
+      document.getElementById('phaseTimer').textContent = formatTime(phaseSecondsRemaining);
+
+      document.getElementById('totalTimeDisplay').textContent = `経過 ${formatTime(elapsedTotalSeconds)} / ${formatTime(TOTAL_SECONDS)}`;
+      const progressPercent = (elapsedTotalSeconds / TOTAL_SECONDS) * 100;
+      document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+      const nextBanner = document.getElementById('nextBanner');
+      const nextTitle = document.getElementById('nextTitle');
+      const nextCountdown = document.getElementById('nextCountdown');
+      const countdownOverlay = document.getElementById('countdownOverlay');
+
+      if (phaseSecondsRemaining <= 10 && currentPhaseIndex < PROTOCOL.length - 1) {
+        const nextPhase = PROTOCOL[currentPhaseIndex + 1];
+        nextTitle.textContent = `${nextPhase.id}/${PROTOCOL.length} ${nextPhase.name} (${nextPhase.rpe.split(' ')[0]})`;
+        nextCountdown.textContent = phaseSecondsRemaining;
+        nextBanner.classList.add('visible');
+      } else {
+        nextBanner.classList.remove('visible');
+      }
+
+      if (phaseSecondsRemaining <= 5 && phaseSecondsRemaining > 0 && currentPhaseIndex < PROTOCOL.length - 1) {
+        countdownOverlay.textContent = phaseSecondsRemaining;
+        countdownOverlay.classList.remove('pop');
+        void countdownOverlay.offsetWidth;
+        countdownOverlay.classList.add('pop');
+      } else {
+        countdownOverlay.classList.remove('pop');
+      }
+    }
+
+    function tick() {
+      if (phaseSecondsRemaining <= 0) {
+        if (currentPhaseIndex < PROTOCOL.length - 1) {
+          playBeepLong();
+          currentPhaseIndex++;
+          phaseSecondsRemaining = PROTOCOL[currentPhaseIndex].duration;
+        } else {
+          playBeepLong();
+          clearInterval(timerInterval);
+          isRunning = false;
+          document.getElementById('startBtn').textContent = "完了！";
+          document.getElementById('phaseName').textContent = "全セッション終了";
+          document.getElementById('phaseRpe').textContent = "お疲れ様でした！RECを停止してください";
+          return;
+        }
+      } else {
+        if (currentPhaseIndex < PROTOCOL.length - 1) {
+          if (phaseSecondsRemaining === 3 || phaseSecondsRemaining === 2 || phaseSecondsRemaining === 1) {
+            playBeepShort();
+          }
+        }
+        phaseSecondsRemaining--;
+        elapsedTotalSeconds++;
+      }
+
+      updateUI();
+    }
+
+    function toggleTimer() {
+      initAudio();
+      if (isRunning) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        document.getElementById('startBtn').textContent = "再開";
+        document.getElementById('startBtn').className = "btn btn-primary";
+      } else {
+        isRunning = true;
+        document.getElementById('startBtn').textContent = "一時停止";
+        document.getElementById('startBtn').className = "btn btn-secondary";
+        timerInterval = setInterval(tick, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      isRunning = false;
+      currentPhaseIndex = 0;
+      phaseSecondsRemaining = PROTOCOL[0].duration;
+      elapsedTotalSeconds = 0;
+      document.getElementById('startBtn').textContent = "スタート";
+      document.getElementById('startBtn').className = "btn btn-primary";
+      updateUI();
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>
