@@ -1008,12 +1008,6 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
           playWoodblockTick(stepCount % 2 === 0);
           stepCount++;
         }, intervalMs);
-      } else {
-        pacerInterval = setInterval(() => {
-          if (!isRunning || !pacerBeatEnabled) return;
-          playAmbientChord();
-        }, 5000);
-        playAmbientChord();
       }
     }
 
@@ -1037,26 +1031,6 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.05);
-      } catch (e) {}
-    }
-
-    function playAmbientChord() {
-      try {
-        initAudio();
-        const freqs = [261.63, 329.63, 392.00, 493.88];
-        freqs.forEach((f, idx) => {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(f, audioCtx.currentTime);
-          gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-          gain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 0.8 + idx * 0.1);
-          gain.gain.exponentialRampToValueAtTime(0.0008, audioCtx.currentTime + 4.2);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 4.3);
-        });
       } catch (e) {}
     }
 
