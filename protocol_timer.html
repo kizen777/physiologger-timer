@@ -680,7 +680,7 @@
 
       <div class="opening-copyright">
         <strong>Copyright © 2026-10-15 Kizen Sasaki (佐々木 毅然). All rights reserved.</strong><br>
-        ORCID: 0009-0001-6935-8794 | Music by Kevin MacLeod (incompetech.com, CC BY 4.0)
+        ORCID: 0009-0001-6935-8794 | Cello: John Michel (CC BY-SA 3.0) | Music: Kevin MacLeod (CC BY 4.0)
       </div>
     </div>
   </div>
@@ -712,7 +712,7 @@
         <button class="age-btn active" onclick="selectAge(70, this)">70代(古稀)</button>
       </div>
       <div class="audio-bar">
-        <div class="bgm-info" id="bgmTitleDisplay" onclick="cycleRestCelloTrack()" style="cursor: pointer;" title="タップで安静時チェロ曲切替">🎻 BGM: Cello Suite #1 in G - Prelude (待機中)</div>
+        <div class="bgm-info" id="bgmTitleDisplay" onclick="cycleRestCelloTrack()" style="cursor: pointer;" title="タップで安静時チェロ曲切替">🎻 BGM: Bach 無伴奏チェロ組曲第1番 Prelude (John Michel 独奏)</div>
         <div class="bgm-controls">
           <button class="bgm-toggle" id="pacerToggleBtn" onclick="togglePacerBeat()">リズム音: ON</button>
           <button class="bgm-toggle" id="bgmToggleBtn" onclick="toggleBGM()">BGM: ON</button>
@@ -752,11 +752,11 @@
     </div>
     <div class="credit-line">
       <strong>© 2026-10-15 Kizen Sasaki. All rights reserved.</strong> (無断配布禁止)<br>
-      Music: Kevin MacLeod (<a href="https://incompetech.com" target="_blank">incompetech.com</a>) | <a href="javascript:void(0)" onclick="document.getElementById('licenseModal').classList.add('open')">[著作権・CC BY 4.0 詳細]</a>
+      Cello: John Michel (Wikimedia, CC BY-SA 3.0) | Music: Kevin MacLeod (<a href="https://incompetech.com" target="_blank">incompetech.com</a>) | <a href="javascript:void(0)" onclick="document.getElementById('licenseModal').classList.add('open')">[著作権・CC詳細]</a>
     </div>
   </footer>
 
-  <!-- CC BY 4.0 ＆ 著作権詳細モーダル -->
+  <!-- CC BY 4.0 / CC BY-SA 3.0 ＆ 著作権詳細モーダル -->
   <div class="license-modal" id="licenseModal" onclick="this.classList.remove('open')">
     <div class="license-box" onclick="event.stopPropagation()">
       <h4>著作権・音楽ライセンス表記 (Copyright &amp; Attribution)</h4>
@@ -764,12 +764,17 @@
       <strong>Copyright © 2026 Kizen Sasaki (佐々木 毅然). All rights reserved.</strong><br>
       Created: 2026-10-15 | ORCID: <a href="https://orcid.org/0009-0001-6935-8794" target="_blank" style="color:#93c5fd;">0009-0001-6935-8794</a><br>
       ※本アプリの無断配布・転載を禁じます。使用に伴う一切の責任は利用者に帰属します。</p>
-      <pre>"Cello Suite #1 in G - Prelude", "Trio for Piano, Cello, and Clarinet",
-"Reawakening", "Sad Trio", "Carefree", "Electro Cabello",
-"Movement Proposition", "Bossa Antigua", "Clean Soul", "Gymnopedie No. 1"
+      <pre>【チェロ独奏・室内楽音源 (Stage 1 &amp; 6)】
+• J.S. Bach: Cello Suite No. 1 in G, BWV 1007 (Prelude / Sarabande)
+• C. Saint-Saëns: The Swan (Le Cygne)
+Performed by John Michel (Cello) — Wikimedia Commons
+Licensed under Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)
+
+【運動・クールダウン音源 (Stage 2〜5 &amp; 代替曲)】
+"Carefree", "Electro Cabello", "Movement Proposition",
+"Bossa Antigua", "Trio for Piano, Cello, and Clarinet"
 Kevin MacLeod (incompetech.com)
-Licensed under Creative Commons: By Attribution 4.0 License
-http://creativecommons.org/licenses/by/4.0/</pre>
+Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
       <button class="btn btn-primary" style="height:40px; font-size:14px; width:100%;" onclick="document.getElementById('licenseModal').classList.remove('open')">閉じる</button>
     </div>
   </div>
@@ -784,23 +789,23 @@ http://creativecommons.org/licenses/by/4.0/</pre>
 
     const REST_CELLO_TRACKS = [
       {
-        title: "Cello Suite #1 in G - Prelude",
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Cello%20Suite%201%20in%20G%20-%20Prelude.mp3",
-        offset: 1
+        title: "Bach 無伴奏チェロ組曲第1番 Prelude (John Michel 独奏)",
+        url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/43/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg.mp3",
+        offset: 0
       },
       {
-        title: "Trio for Piano, Cello, and Clarinet",
+        title: "サン＝サーンス：白鳥 The Swan (John Michel チェロ)",
+        url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/db/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg.mp3",
+        offset: 0
+      },
+      {
+        title: "Bach 無伴奏チェロ組曲第1番 Sarabande (John Michel 独奏)",
+        url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/30/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Sarabande.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Sarabande.ogg.mp3",
+        offset: 0
+      },
+      {
+        title: "Trio for Piano, Cello, and Clarinet (チェロ三重奏)",
         url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Trio%20for%20Piano%2C%20Cello%2C%20and%20Clarinet.mp3",
-        offset: 1
-      },
-      {
-        title: "Reawakening (Cello & Piano)",
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Reawakening.mp3",
-        offset: 1
-      },
-      {
-        title: "Sad Trio (Cello, Violin & Piano)",
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Sad%20Trio.mp3",
         offset: 1
       }
     ];
@@ -816,9 +821,9 @@ http://creativecommons.org/licenses/by/4.0/</pre>
         hrRatio: [0.40, 0.50],
         baseSpm: 0,
         alphaDesc: "α1 > 1.0",
-        songTitle: "Cello Suite #1 in G - Prelude",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Cello%20Suite%201%20in%20G%20-%20Prelude.mp3",
-        startOffset: 1
+        songTitle: "Bach 無伴奏チェロ組曲第1番 Prelude (John Michel 独奏)",
+        songUrl: "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/43/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg.mp3",
+        startOffset: 0
       },
       {
         id: 2,
@@ -881,9 +886,9 @@ http://creativecommons.org/licenses/by/4.0/</pre>
         hrRatio: [0.45, 0.55],
         baseSpm: 0,
         alphaDesc: "α1 > 1.0 復帰",
-        songTitle: "Trio for Piano, Cello, and Clarinet",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Trio%20for%20Piano%2C%20Cello%2C%20and%20Clarinet.mp3",
-        startOffset: 1
+        songTitle: "サン＝サーンス：白鳥 The Swan (John Michel チェロ)",
+        songUrl: "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/db/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg.mp3",
+        startOffset: 0
       }
     ];
 
