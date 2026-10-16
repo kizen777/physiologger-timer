@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>PhysioLogger Protocol Timer</title>
+  <title>PhysioLogger Pacer — 17-Min Indoor Protocol</title>
   <style>
     * {
       box-sizing: border-box;
@@ -15,7 +15,7 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Hiragino Sans", "Helvetica Neue", sans-serif;
       background-color: #0b0f19;
       color: #ffffff;
       min-height: 100vh;
@@ -27,6 +27,184 @@
       transition: background-color 0.6s ease;
     }
 
+    /* ==========================================================
+       オープニング画面（スプラッシュ・安全注意事項・免責同意）
+       ========================================================== */
+    .opening-screen {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 15%, #172554 0%, #090d16 75%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: env(safe-area-inset-top, 20px) 18px env(safe-area-inset-bottom, 18px) 18px;
+      overflow-y: auto;
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .opening-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.04);
+    }
+
+    .opening-container {
+      max-width: 520px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 12px;
+    }
+
+    .brand-hero {
+      text-align: center;
+      padding: 12px 8px 4px 8px;
+    }
+
+    .brand-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .brand-title {
+      font-size: clamp(28px, 7.5vw, 38px);
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #93c5fd 60%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.15;
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .notice-card {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .notice-card h3 {
+      font-size: 14px;
+      font-weight: 800;
+      color: #60a5fa;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .notice-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: #e2e8f0;
+    }
+
+    .notice-list li {
+      position: relative;
+      padding-left: 16px;
+    }
+
+    .notice-list li::before {
+      content: "•";
+      position: absolute;
+      left: 2px;
+      color: #38bdf8;
+      font-weight: 900;
+    }
+
+    .notice-highlight {
+      color: #fde68a;
+      font-weight: 700;
+    }
+
+    .notice-warn {
+      color: #fca5a5;
+      font-weight: 700;
+    }
+
+    .science-box {
+      background: rgba(30, 41, 59, 0.65);
+      border-left: 3px solid #38bdf8;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #cbd5e1;
+    }
+
+    .science-box strong {
+      color: #ffffff;
+    }
+
+    .disclaimer-box {
+      background: rgba(127, 29, 29, 0.22);
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #fecaca;
+    }
+
+    .disclaimer-box strong {
+      color: #fca5a5;
+    }
+
+    .enter-btn {
+      width: 100%;
+      height: 56px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.45);
+      transition: transform 0.15s ease;
+      margin-top: 2px;
+    }
+
+    .enter-btn:active {
+      transform: scale(0.98);
+    }
+
+    .opening-copyright {
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+      line-height: 1.4;
+      padding-top: 4px;
+    }
+
+    /* ==========================================================
+       メインペーサー画面
+       ========================================================== */
     header {
       display: flex;
       justify-content: space-between;
@@ -34,12 +212,28 @@
       padding: 6px 2px 4px 2px;
     }
 
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-btn {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #e2e8f0;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
     .app-title {
       font-size: 13px;
       font-weight: 800;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
       color: #94a3b8;
-      text-transform: uppercase;
     }
 
     .total-time {
@@ -354,13 +548,12 @@
       text-decoration: underline;
     }
 
-    /* ライセンス詳細モーダル */
     .license-modal {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.8);
-      z-index: 100;
+      z-index: 300;
       align-items: center;
       justify-content: center;
       padding: 20px;
@@ -429,9 +622,73 @@
 </head>
 <body class="theme-rest">
 
+  <!-- ==========================================================
+       オープニング画面（初回起動時＆「ⓘ 案内」タップ時に表示）
+       ========================================================== -->
+  <div class="opening-screen" id="openingScreen">
+    <div class="opening-container">
+      <div class="brand-hero">
+        <div class="brand-badge">Dedicated Pacing System</div>
+        <h1 class="brand-title">PhysioLogger Pacer</h1>
+        <p class="brand-subtitle">
+          本システムは iOS 生体計測アプリ <strong>「PhysioLogger」専用</strong> の<br>
+          17分間・室内漸増負荷プロトコル誘導ペーサーです。
+        </p>
+      </div>
+
+      <!-- 安全上の注意事項・年代設定ガイド -->
+      <div class="notice-card">
+        <h3>⚠️ 安全上の注意事項・使い方のガイド</h3>
+        <ul class="notice-list">
+          <li>
+            <strong>体調第一・無理は禁物：</strong>
+            ご自身の体調を最優先し、少しでも体調が優れない時・睡眠不足・発熱時は実施しないでください。運動中にめまい・動悸・胸痛・強い息切れを感じた場合は<span class="notice-warn">直ちに中断</span>してください。
+          </li>
+          <li>
+            <strong>年代設定（10歳階級）の調整コツ：</strong>
+            画面上部で「20代〜70代(古稀)」を選択できます。実年齢の設定で「きつい・無理がある」と感じる場合は、<span class="notice-highlight">無理をせず1〜2段階「上の年代」（例：50代の方が60代・70代設定）</span>に上げて安全域で実施してください。
+          </li>
+          <li>
+            <strong>PhysioLogger との連携：</strong>
+            Polar H10 を装着して iPhone の「PhysioLogger」で <strong>REC 開始</strong> を押したと同時に、本ペーサーの「スタート」を開始してください。
+          </li>
+        </ul>
+      </div>
+
+      <!-- 学術的根拠 -->
+      <div class="science-box">
+        <strong>📚 年代別推奨心拍数・閾値モデルの数理的根拠：</strong><br>
+        • 最大心拍数予測式：<strong>Tanaka et al. (2001)</strong> $\text{HR}_{\max} = 208 - 0.7 \times \text{Age}$ (<em>J Am Coll Cardiol.</em> 37:153-156)<br>
+        • 非線形HRV代謝閾値：<strong>Rogers &amp; Gronwald (2021, 2022)</strong> DFA $\alpha 1 \approx 0.75$ (有酸素性閾値 LT1) / $\alpha 1 \approx 0.50$ (無酸素性閾値 LT2) (<em>Front. Physiol.</em>)
+      </div>
+
+      <!-- 免責事項・著作権・無断配布禁止 -->
+      <div class="disclaimer-box">
+        <strong>【免責事項・著作権・無断配布禁止】</strong><br>
+        • 本アプリ・プロトコルの使用により生じたいかなる健康被害・事故・損害についても、<strong>著作者（Kizen Sasaki）は一切の責任を負いません</strong>。すべて自己責任のもとで実施してください。<br>
+        • 本システムおよびプロトコル設計の著作権は著作者に帰属します。<strong>無断での複製・転載・再配布・商用利用を固く禁じます。</strong>
+      </div>
+
+      <button class="enter-btn" onclick="enterPacerApp()">
+        上記に同意して PhysioLogger Pacer を開く ▶
+      </button>
+
+      <div class="opening-copyright">
+        <strong>Copyright © 2026-10-15 Kizen Sasaki (佐々木 毅然). All rights reserved.</strong><br>
+        ORCID: 0009-0001-6935-8794 | Music by Kevin MacLeod (incompetech.com, CC BY 4.0)
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       メインペーサー画面
+       ========================================================== -->
   <div>
     <header>
-      <div class="app-title">PhysioLogger ペーサー</div>
+      <div class="header-left">
+        <div class="app-title">PhysioLogger Pacer</div>
+        <button class="info-btn" onclick="showOpeningScreen()">ⓘ 注意事項・規約</button>
+      </div>
       <div class="total-time" id="totalTimeDisplay">経過 00:00 / 17:00</div>
     </header>
 
@@ -489,7 +746,7 @@
       <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">スタート</button>
     </div>
     <div class="credit-line">
-      <strong>© 2026-10-15 Kizen Sasaki. All rights reserved.</strong><br>
+      <strong>© 2026-10-15 Kizen Sasaki. All rights reserved.</strong> (無断配布禁止)<br>
       Music: Kevin MacLeod (<a href="https://incompetech.com" target="_blank">incompetech.com</a>) | <a href="javascript:void(0)" onclick="document.getElementById('licenseModal').classList.add('open')">[著作権・CC BY 4.0 詳細]</a>
     </div>
   </footer>
@@ -497,10 +754,11 @@
   <!-- CC BY 4.0 ＆ 著作権詳細モーダル -->
   <div class="license-modal" id="licenseModal" onclick="this.classList.remove('open')">
     <div class="license-box" onclick="event.stopPropagation()">
-      <h4>著作権・音楽ライセンス表記 (Copyright & Attribution)</h4>
+      <h4>著作権・音楽ライセンス表記 (Copyright &amp; Attribution)</h4>
       <p><strong>システム・プロトコル著作権:</strong><br>
       <strong>Copyright © 2026 Kizen Sasaki (佐々木 毅然). All rights reserved.</strong><br>
-      Created: 2026-10-15 | ORCID: <a href="https://orcid.org/0009-0001-6935-8794" target="_blank" style="color:#93c5fd;">0009-0001-6935-8794</a></p>
+      Created: 2026-10-15 | ORCID: <a href="https://orcid.org/0009-0001-6935-8794" target="_blank" style="color:#93c5fd;">0009-0001-6935-8794</a><br>
+      ※本アプリの無断配布・転載を禁じます。使用に伴う一切の責任は利用者に帰属します。</p>
       <pre>"Gymnopedie No. 1", "Carefree", "Electro Cabello",
 "Movement Proposition", "Bossa Antigua", "Clean Soul"
 Kevin MacLeod (incompetech.com)
@@ -510,7 +768,7 @@ http://creativecommons.org/licenses/by/4.0/</pre>
     </div>
   </div>
 
-  <!-- BGM Audio Element (crossorigin属性を外してCORSブロックを完全解消) -->
+  <!-- BGM Audio Element -->
   <audio id="bgmPlayer" loop preload="auto" playsinline></audio>
 
   <script>
@@ -530,7 +788,7 @@ http://creativecommons.org/licenses/by/4.0/</pre>
         alphaDesc: "α1 > 1.0",
         songTitle: "Gymnopedie No. 1",
         songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Gymnopedie%20No%201.mp3",
-        startOffset: 3 // 冒頭の無音区間をスキップして3秒目から再生
+        startOffset: 3
       },
       {
         id: 2,
@@ -621,7 +879,24 @@ http://creativecommons.org/licenses/by/4.0/</pre>
       }
     }
 
-    // BGMのロードと再生（CORS制限なし）
+    // オープニング画面から同意してペーサーへ入る
+    function enterPacerApp() {
+      initAudio();
+      playBeepShort();
+      document.getElementById('openingScreen').classList.add('hidden');
+      // 初回BGMのプリロード開始
+      const phase = PROTOCOL[currentPhaseIndex];
+      if (currentLoadedUrl !== phase.songUrl) {
+        currentLoadedUrl = phase.songUrl;
+        bgmPlayer.src = phase.songUrl;
+        bgmPlayer.load();
+      }
+    }
+
+    function showOpeningScreen() {
+      document.getElementById('openingScreen').classList.remove('hidden');
+    }
+
     function loadAndPlayPhaseBGM(phaseIndex) {
       const phase = PROTOCOL[phaseIndex];
       const titleEl = document.getElementById('bgmTitleDisplay');
@@ -667,7 +942,6 @@ http://creativecommons.org/licenses/by/4.0/</pre>
       document.getElementById('bgmTitleDisplay').textContent = `🎵 再生中: ${phase.songTitle}`;
     });
 
-    // 年代に応じた推奨ピッチ（SPM）を計算してWeb Audioで心地よいペースメーカー音を鳴らす
     function getTargetSpm(phase) {
       if (phase.baseSpm === 0) return 0;
       const ageOffset = Math.round((45 - currentAge) * 0.35);
@@ -682,7 +956,6 @@ http://creativecommons.org/licenses/by/4.0/</pre>
       const spm = getTargetSpm(phase);
 
       if (spm > 0) {
-        // 運動フェーズ：足のピッチ（歩/分）に合わせた心地よいウッドブロック風リズム音
         const intervalMs = (60 / spm) * 1000;
         let stepCount = 0;
         pacerInterval = setInterval(() => {
@@ -691,7 +964,6 @@ http://creativecommons.org/licenses/by/4.0/</pre>
           stepCount++;
         }, intervalMs);
       } else {
-        // 安静フェーズ：4秒吸って6秒吐く（毎分6回）深呼吸ガイドの柔らかいチャイム
         pacerInterval = setInterval(() => {
           if (!isRunning || !pacerBeatEnabled) return;
           playAmbientChord();
@@ -707,7 +979,6 @@ http://creativecommons.org/licenses/by/4.0/</pre>
       }
     }
 
-    // 運動ピッチ用の軽快なリズムパルス音
     function playWoodblockTick(isAccent) {
       try {
         initAudio();
@@ -724,11 +995,10 @@ http://creativecommons.org/licenses/by/4.0/</pre>
       } catch (e) {}
     }
 
-    // 安静時用の心地よいアンビエント和音（Web Audio シンセ）
     function playAmbientChord() {
       try {
         initAudio();
-        const freqs = [261.63, 329.63, 392.00, 493.88]; // Cmaj7 ヒーリングコード
+        const freqs = [261.63, 329.63, 392.00, 493.88];
         freqs.forEach((f, idx) => {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -783,7 +1053,6 @@ http://creativecommons.org/licenses/by/4.0/</pre>
       if (isRunning) startPacerLoop();
     }
 
-    // 任意のフェーズへスキップ・試聴する関数
     function changePhase(delta) {
       initAudio();
       const nextIdx = currentPhaseIndex + delta;
@@ -796,7 +1065,6 @@ http://creativecommons.org/licenses/by/4.0/</pre>
         loadAndPlayPhaseBGM(currentPhaseIndex);
         startPacerLoop();
       } else {
-        // 停止中でも曲名を更新
         const phase = PROTOCOL[currentPhaseIndex];
         document.getElementById('bgmTitleDisplay').textContent = `🎵 BGM: ${phase.songTitle} (待機中)`;
       }
@@ -940,7 +1208,7 @@ http://creativecommons.org/licenses/by/4.0/</pre>
         document.getElementById('startBtn').className = "btn btn-primary";
       } else {
         isRunning = true;
-        playBeepShort(); // スタート確認フィードバック音
+        playBeepShort();
         loadAndPlayPhaseBGM(currentPhaseIndex);
         startPacerLoop();
         document.getElementById('startBtn').textContent = "一時停止";
