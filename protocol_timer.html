@@ -712,8 +712,9 @@
         <button class="age-btn active" onclick="selectAge(70, this)">70代(古稀)</button>
       </div>
       <div class="audio-bar">
-        <div class="bgm-info" id="bgmTitleDisplay" onclick="cycleRestCelloTrack()" style="cursor: pointer;" title="タップで安静時チェロ曲切替">🎻 BGM: Bach 無伴奏チェロ組曲第1番 Prelude (John Michel 独奏)</div>
+        <div class="bgm-info" id="bgmTitleDisplay" onclick="cycleRestCelloTrack()" style="cursor: pointer;" title="タップで安静時チェロ曲切替">🎻 BGM: Bach 無伴奏チェロ組曲第1番 Prelude (ゆったり 0.72x)</div>
         <div class="bgm-controls">
+          <button class="bgm-toggle" id="tempoToggleBtn" onclick="cycleRestTempo()" title="安静時チェロのテンポ調整">速度: 0.72x</button>
           <button class="bgm-toggle" id="pacerToggleBtn" onclick="togglePacerBeat()">リズム音: ON</button>
           <button class="bgm-toggle" id="bgmToggleBtn" onclick="toggleBGM()">BGM: ON</button>
         </div>
@@ -767,8 +768,7 @@
       <pre>【チェロ独奏・室内楽音源 (Stage 1 &amp; 6)】
 • J.S. Bach: Cello Suite No. 1 in G, BWV 1007 (Prelude / Sarabande)
 • C. Saint-Saëns: The Swan (Le Cygne)
-Performed by John Michel (Cello) — Wikimedia Commons
-Licensed under Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)
+Performed by John Michel (Cello, CC BY-SA 3.0) / Pablo Casals (1939, Public Domain) — Wikimedia Commons
 
 【運動・クールダウン音源 (Stage 2〜5 &amp; 代替曲)】
 "Carefree", "Electro Cabello", "Movement Proposition",
@@ -786,27 +786,33 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
     let currentAge = 70;
     let bgmEnabled = true;
     let pacerBeatEnabled = true;
+    const REST_TEMPOS = [0.72, 0.65, 0.80, 0.90, 1.00];
+    let currentRestTempoIndex = 0;
 
     const REST_CELLO_TRACKS = [
       {
         title: "Bach 無伴奏チェロ組曲第1番 Prelude (John Michel 独奏)",
         url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/43/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg.mp3",
-        offset: 0
+        offset: 0,
+        rate: 0.72
+      },
+      {
+        title: "Bach 無伴奏チェロ組曲第1番 Prelude (Pablo Casals 1939録音)",
+        url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/9/9d/Bach_-_Cello_Suite_no._1_in_G_major%2C_BWV_1007_-_I._Pr%C3%A9lude.ogg/Bach_-_Cello_Suite_no._1_in_G_major%2C_BWV_1007_-_I._Pr%C3%A9lude.ogg.mp3",
+        offset: 0,
+        rate: 0.85
       },
       {
         title: "サン＝サーンス：白鳥 The Swan (John Michel チェロ)",
         url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/db/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg.mp3",
-        offset: 0
+        offset: 0,
+        rate: 0.90
       },
       {
         title: "Bach 無伴奏チェロ組曲第1番 Sarabande (John Michel 独奏)",
         url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/30/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Sarabande.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Sarabande.ogg.mp3",
-        offset: 0
-      },
-      {
-        title: "Trio for Piano, Cello, and Clarinet (チェロ三重奏)",
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Trio%20for%20Piano%2C%20Cello%2C%20and%20Clarinet.mp3",
-        offset: 1
+        offset: 0,
+        rate: 0.90
       }
     ];
     let currentRestTrackIndex = 0;
@@ -823,7 +829,8 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
         alphaDesc: "α1 > 1.0",
         songTitle: "Bach 無伴奏チェロ組曲第1番 Prelude (John Michel 独奏)",
         songUrl: "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/43/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg.mp3",
-        startOffset: 0
+        startOffset: 0,
+        playbackRate: 0.72
       },
       {
         id: 2,
@@ -836,7 +843,8 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
         alphaDesc: "α1 ≈ 0.90",
         songTitle: "Carefree",
         songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Carefree.mp3",
-        startOffset: 1
+        startOffset: 1,
+        playbackRate: 1.0
       },
       {
         id: 3,
@@ -849,7 +857,8 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
         alphaDesc: "α1 ≈ 0.75 (LT1)",
         songTitle: "Electro Cabello",
         songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Electro%20Cabello.mp3",
-        startOffset: 0
+        startOffset: 0,
+        playbackRate: 1.0
       },
       {
         id: 4,
@@ -862,7 +871,8 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
         alphaDesc: "α1 ≈ 0.50 (LT2)",
         songTitle: "Movement Proposition",
         songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Movement%20Proposition.mp3",
-        startOffset: 0
+        startOffset: 0,
+        playbackRate: 1.0
       },
       {
         id: 5,
@@ -875,7 +885,8 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
         alphaDesc: "α1 回復上昇",
         songTitle: "Bossa Antigua",
         songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Bossa%20Antigua.mp3",
-        startOffset: 1
+        startOffset: 1,
+        playbackRate: 1.0
       },
       {
         id: 6,
@@ -888,7 +899,8 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
         alphaDesc: "α1 > 1.0 復帰",
         songTitle: "サン＝サーンス：白鳥 The Swan (John Michel チェロ)",
         songUrl: "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/db/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg.mp3",
-        startOffset: 0
+        startOffset: 0,
+        playbackRate: 0.90
       }
     ];
 
@@ -904,6 +916,26 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
     let audioCtx = null;
     const bgmPlayer = document.getElementById('bgmPlayer');
     let currentLoadedUrl = "";
+
+    function applyPlaybackRate(rate) {
+      const r = rate || 1.0;
+      bgmPlayer.preservesPitch = true;
+      bgmPlayer.mozPreservesPitch = true;
+      bgmPlayer.webkitPreservesPitch = true;
+      bgmPlayer.playbackRate = r;
+      bgmPlayer.defaultPlaybackRate = r;
+      const tempoBtn = document.getElementById('tempoToggleBtn');
+      if (tempoBtn) {
+        tempoBtn.textContent = `速度: ${r.toFixed(2)}x`;
+      }
+    }
+
+    function cycleRestTempo() {
+      currentRestTempoIndex = (currentRestTempoIndex + 1) % REST_TEMPOS.length;
+      const newRate = REST_TEMPOS[currentRestTempoIndex];
+      PROTOCOL[currentPhaseIndex].playbackRate = newRate;
+      applyPlaybackRate(newRate);
+    }
 
     function initAudio() {
       if (!audioCtx) {
@@ -926,6 +958,7 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
         bgmPlayer.src = phase.songUrl;
         bgmPlayer.load();
       }
+      applyPlaybackRate(phase.playbackRate || 1.0);
     }
 
     function showOpeningScreen() {
@@ -949,31 +982,35 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
         bgmPlayer.src = phase.songUrl;
         bgmPlayer.load();
         bgmPlayer.onloadedmetadata = () => {
+          applyPlaybackRate(phase.playbackRate || 1.0);
           if (phase.startOffset && bgmPlayer.duration > phase.startOffset) {
             bgmPlayer.currentTime = phase.startOffset;
           }
         };
       }
 
+      applyPlaybackRate(phase.playbackRate || 1.0);
       bgmPlayer.volume = 0.85;
 
       if (isRunning) {
         const playPromise = bgmPlayer.play();
         if (playPromise !== undefined) {
           playPromise.then(() => {
-            titleEl.textContent = `🎵 再生中: ${phase.songTitle}`;
+            applyPlaybackRate(phase.playbackRate || 1.0);
+            titleEl.textContent = `🎻 再生中: ${phase.songTitle}`;
           }).catch(err => {
             console.warn("Audio play warning:", err);
-            titleEl.textContent = `🎵 BGM: ${phase.songTitle} (リズム音動作中)`;
+            titleEl.textContent = `🎻 BGM: ${phase.songTitle}`;
           });
         }
       } else {
-        titleEl.textContent = `🎵 BGM: ${phase.songTitle} (待機中)`;
+        titleEl.textContent = `🎻 BGM: ${phase.songTitle} (待機中)`;
       }
     }
 
     bgmPlayer.addEventListener('playing', () => {
       const phase = PROTOCOL[currentPhaseIndex];
+      applyPlaybackRate(phase.playbackRate || 1.0);
       document.getElementById('bgmTitleDisplay').textContent = `🎻 再生中: ${phase.songTitle}`;
     });
 
@@ -984,6 +1021,7 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
       PROTOCOL[currentPhaseIndex].songTitle = track.title;
       PROTOCOL[currentPhaseIndex].songUrl = track.url;
       PROTOCOL[currentPhaseIndex].startOffset = track.offset;
+      PROTOCOL[currentPhaseIndex].playbackRate = track.rate;
       loadAndPlayPhaseBGM(currentPhaseIndex);
     }
 
