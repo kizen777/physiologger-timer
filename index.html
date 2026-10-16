@@ -712,7 +712,7 @@
         <button class="age-btn active" onclick="selectAge(70, this)">70代(古稀)</button>
       </div>
       <div class="audio-bar">
-        <div class="bgm-info" id="bgmTitleDisplay">🎵 BGM: Gymnopedie No. 1 (待機中)</div>
+        <div class="bgm-info" id="bgmTitleDisplay" onclick="cycleRestCelloTrack()" style="cursor: pointer;" title="タップで安静時チェロ曲切替">🎻 BGM: Cello Suite #1 in G - Prelude (待機中)</div>
         <div class="bgm-controls">
           <button class="bgm-toggle" id="pacerToggleBtn" onclick="togglePacerBeat()">リズム音: ON</button>
           <button class="bgm-toggle" id="bgmToggleBtn" onclick="toggleBGM()">BGM: ON</button>
@@ -764,8 +764,9 @@
       <strong>Copyright © 2026 Kizen Sasaki (佐々木 毅然). All rights reserved.</strong><br>
       Created: 2026-10-15 | ORCID: <a href="https://orcid.org/0009-0001-6935-8794" target="_blank" style="color:#93c5fd;">0009-0001-6935-8794</a><br>
       ※本アプリの無断配布・転載を禁じます。使用に伴う一切の責任は利用者に帰属します。</p>
-      <pre>"Gymnopedie No. 1", "Carefree", "Electro Cabello",
-"Movement Proposition", "Bossa Antigua", "Clean Soul"
+      <pre>"Cello Suite #1 in G - Prelude", "Trio for Piano, Cello, and Clarinet",
+"Reawakening", "Sad Trio", "Carefree", "Electro Cabello",
+"Movement Proposition", "Bossa Antigua", "Clean Soul", "Gymnopedie No. 1"
 Kevin MacLeod (incompetech.com)
 Licensed under Creative Commons: By Attribution 4.0 License
 http://creativecommons.org/licenses/by/4.0/</pre>
@@ -781,6 +782,30 @@ http://creativecommons.org/licenses/by/4.0/</pre>
     let bgmEnabled = true;
     let pacerBeatEnabled = true;
 
+    const REST_CELLO_TRACKS = [
+      {
+        title: "Cello Suite #1 in G - Prelude",
+        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Cello%20Suite%201%20in%20G%20-%20Prelude.mp3",
+        offset: 1
+      },
+      {
+        title: "Trio for Piano, Cello, and Clarinet",
+        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Trio%20for%20Piano%2C%20Cello%2C%20and%20Clarinet.mp3",
+        offset: 1
+      },
+      {
+        title: "Reawakening (Cello & Piano)",
+        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Reawakening.mp3",
+        offset: 1
+      },
+      {
+        title: "Sad Trio (Cello, Violin & Piano)",
+        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Sad%20Trio.mp3",
+        offset: 1
+      }
+    ];
+    let currentRestTrackIndex = 0;
+
     const PROTOCOL = [
       {
         id: 1,
@@ -791,9 +816,9 @@ http://creativecommons.org/licenses/by/4.0/</pre>
         hrRatio: [0.40, 0.50],
         baseSpm: 0,
         alphaDesc: "α1 > 1.0",
-        songTitle: "Gymnopedie No. 1",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Gymnopedie%20No%201.mp3",
-        startOffset: 3
+        songTitle: "Cello Suite #1 in G - Prelude",
+        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Cello%20Suite%201%20in%20G%20-%20Prelude.mp3",
+        startOffset: 1
       },
       {
         id: 2,
@@ -856,9 +881,9 @@ http://creativecommons.org/licenses/by/4.0/</pre>
         hrRatio: [0.45, 0.55],
         baseSpm: 0,
         alphaDesc: "α1 > 1.0 復帰",
-        songTitle: "Clean Soul",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Clean%20Soul.mp3",
-        startOffset: 2
+        songTitle: "Trio for Piano, Cello, and Clarinet",
+        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Trio%20for%20Piano%2C%20Cello%2C%20and%20Clarinet.mp3",
+        startOffset: 1
       }
     ];
 
@@ -944,8 +969,18 @@ http://creativecommons.org/licenses/by/4.0/</pre>
 
     bgmPlayer.addEventListener('playing', () => {
       const phase = PROTOCOL[currentPhaseIndex];
-      document.getElementById('bgmTitleDisplay').textContent = `🎵 再生中: ${phase.songTitle}`;
+      document.getElementById('bgmTitleDisplay').textContent = `🎻 再生中: ${phase.songTitle}`;
     });
+
+    function cycleRestCelloTrack() {
+      if (currentPhaseIndex !== 0 && currentPhaseIndex !== 5) return;
+      currentRestTrackIndex = (currentRestTrackIndex + 1) % REST_CELLO_TRACKS.length;
+      const track = REST_CELLO_TRACKS[currentRestTrackIndex];
+      PROTOCOL[currentPhaseIndex].songTitle = track.title;
+      PROTOCOL[currentPhaseIndex].songUrl = track.url;
+      PROTOCOL[currentPhaseIndex].startOffset = track.offset;
+      loadAndPlayPhaseBGM(currentPhaseIndex);
+    }
 
     function getTargetSpm(phase) {
       if (phase.baseSpm === 0) return 0;
