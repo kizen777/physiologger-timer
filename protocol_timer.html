@@ -712,9 +712,9 @@
         <button class="age-btn active" onclick="selectAge(70, this)">70代(古稀)</button>
       </div>
       <div class="audio-bar">
-        <div class="bgm-info" id="bgmTitleDisplay" onclick="cycleRestCelloTrack()" style="cursor: pointer;" title="タップで安静時チェロ曲切替">🎻 BGM: Bach 無伴奏チェロ組曲第1番 Prelude (ゆったり 0.72x)</div>
+        <div class="bgm-info" id="bgmTitleDisplay" onclick="cycleRestCelloTrack()" style="cursor: pointer;" title="タップで安静時曲切替（オーボエ／チェロ）">🎵 BGM: Marcello Oboe Concerto 第2楽章 Adagio (タップで曲切替)</div>
         <div class="bgm-controls">
-          <button class="bgm-toggle" id="tempoToggleBtn" onclick="cycleRestTempo()" title="安静時チェロのテンポ調整">速度: 0.72x</button>
+          <button class="bgm-toggle" id="tempoToggleBtn" onclick="cycleRestTempo()" title="テンポ調整">速度: 1.00x</button>
           <button class="bgm-toggle" id="pacerToggleBtn" onclick="togglePacerBeat()">リズム音: ON</button>
           <button class="bgm-toggle" id="bgmToggleBtn" onclick="toggleBGM()">BGM: ON</button>
         </div>
@@ -753,7 +753,7 @@
     </div>
     <div class="credit-line">
       <strong>© 2026-10-15 Kizen Sasaki. All rights reserved.</strong> (無断配布禁止)<br>
-      Cello: John Michel (Wikimedia, CC BY-SA 3.0) | Music: Kevin MacLeod (<a href="https://incompetech.com" target="_blank">incompetech.com</a>) | <a href="javascript:void(0)" onclick="document.getElementById('licenseModal').classList.add('open')">[著作権・CC詳細]</a>
+      Oboe/Cello: Marcello (PD / Internet Archive) &amp; John Michel (CC BY-SA 3.0) | Music: Kevin MacLeod (<a href="https://incompetech.com" target="_blank">incompetech.com</a>) | <a href="javascript:void(0)" onclick="document.getElementById('licenseModal').classList.add('open')">[著作権・CC詳細]</a>
     </div>
   </footer>
 
@@ -765,16 +765,16 @@
       <strong>Copyright © 2026 Kizen Sasaki (佐々木 毅然). All rights reserved.</strong><br>
       Created: 2026-10-15 | ORCID: <a href="https://orcid.org/0009-0001-6935-8794" target="_blank" style="color:#93c5fd;">0009-0001-6935-8794</a><br>
       ※本アプリの無断配布・転載を禁じます。使用に伴う一切の責任は利用者に帰属します。</p>
-      <pre>【チェロ独奏・室内楽音源 (Stage 1 &amp; 6)】
-• J.S. Bach: Cello Suite No. 1 in G, BWV 1007 (Prelude / Sarabande)
-• C. Saint-Saëns: The Swan (Le Cygne)
-Performed by John Michel (Cello, CC BY-SA 3.0) / Pablo Casals (1939, Public Domain) — Wikimedia Commons
+      <pre>【安静・回復音源 (Stage 1 &amp; 6: Oboe &amp; Cello)】
+• A. Marcello: Oboe Concerto in D/C minor — II. Adagio
+  (Diego Dini Ciacci, Oboe &amp; Sestetto d'Archi Scaligero / R. Reversy &amp; E. Ansermet 1951 Public Domain)
+• T. Albinoni: Oboe Concerto in D minor, Op. 9 No. 2 — II. Adagio (Paul Arden-Taylor, CC BY-SA)
+• J.S. Bach: Cello Suite No. 1 in G, BWV 1007 &amp; C. Saint-Saëns: The Swan
+  (John Michel, Cello, CC BY-SA 3.0 / Pablo Casals 1939, Public Domain)
 
-【運動・クールダウン音源 (Stage 2〜5 &amp; 代替曲)】
-"Carefree", "Electro Cabello", "Movement Proposition",
-"Bossa Antigua", "Trio for Piano, Cello, and Clarinet"
-Kevin MacLeod (incompetech.com)
-Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
+【運動・クールダウン音源 (Stage 2〜5)】
+"Carefree", "Electro Cabello", "Movement Proposition", "Bossa Antigua"
+Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
       <button class="btn btn-primary" style="height:40px; font-size:14px; width:100%;" onclick="document.getElementById('licenseModal').classList.remove('open')">閉じる</button>
     </div>
   </div>
@@ -786,33 +786,45 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
     let currentAge = 70;
     let bgmEnabled = true;
     let pacerBeatEnabled = true;
-    const REST_TEMPOS = [0.72, 0.65, 0.80, 0.90, 1.00];
+    const REST_TEMPOS = [1.00, 0.90, 0.80, 0.72, 0.65];
     let currentRestTempoIndex = 0;
 
     const REST_CELLO_TRACKS = [
       {
-        title: "Bach 無伴奏チェロ組曲第1番 Prelude (John Michel 独奏)",
+        title: "Marcello: Oboe Concerto 第2楽章 Adagio (D. Dini Ciacci オーボエ)",
+        url: "https://archive.org/download/18-marcello-concerto-per-oboe-adagio/18%20Marcello_%20Concerto%20Per%20Oboe%20Adagio.mp3",
+        offset: 0,
+        rate: 1.00
+      },
+      {
+        title: "Marcello: Oboe Concerto 第2楽章 Adagio (R. Reversy & Ansermet 1951 PD)",
+        url: "https://archive.org/download/01-helaerts-ansermet-vivaldi-bassoon-conc-in-d-1/05%20Reversy%2C%20Ansermet%20-%20Marcello%20Oboe%20conc%20in%20c%202.mp3",
+        offset: 0,
+        rate: 1.00
+      },
+      {
+        title: "Bach: 無伴奏チェロ組曲第1番 Prelude (John Michel 独奏・0.72x)",
         url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/43/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg.mp3",
         offset: 0,
         rate: 0.72
       },
       {
-        title: "Bach 無伴奏チェロ組曲第1番 Prelude (Pablo Casals 1939録音)",
+        title: "Bach: 無伴奏チェロ組曲第1番 Prelude (Pablo Casals 1939・0.85x)",
         url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/9/9d/Bach_-_Cello_Suite_no._1_in_G_major%2C_BWV_1007_-_I._Pr%C3%A9lude.ogg/Bach_-_Cello_Suite_no._1_in_G_major%2C_BWV_1007_-_I._Pr%C3%A9lude.ogg.mp3",
         offset: 0,
         rate: 0.85
       },
       {
-        title: "サン＝サーンス：白鳥 The Swan (John Michel チェロ)",
+        title: "サン＝サーンス：白鳥 The Swan (John Michel チェロ・0.90x)",
         url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/db/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg.mp3",
         offset: 0,
         rate: 0.90
       },
       {
-        title: "Bach 無伴奏チェロ組曲第1番 Sarabande (John Michel 独奏)",
-        url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/30/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Sarabande.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Sarabande.ogg.mp3",
+        title: "Albinoni: Oboe Concerto Op.9-2 第2楽章 Adagio (P. Arden-Taylor)",
+        url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/da/Albinoni%2C_Concerto_for_Oboe_and_Strings_No._2_in_D_minor%2C_Op._9%2C_II._Adagio.ogg/Albinoni%2C_Concerto_for_Oboe_and_Strings_No._2_in_D_minor%2C_Op._9%2C_II._Adagio.ogg.mp3",
         offset: 0,
-        rate: 0.90
+        rate: 1.00
       }
     ];
     let currentRestTrackIndex = 0;
@@ -827,10 +839,10 @@ Licensed under Creative Commons: By Attribution 4.0 License (CC BY 4.0)</pre>
         hrRatio: [0.40, 0.50],
         baseSpm: 0,
         alphaDesc: "α1 > 1.0",
-        songTitle: "Bach 無伴奏チェロ組曲第1番 Prelude (John Michel 独奏)",
-        songUrl: "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/43/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg.mp3",
+        songTitle: "Marcello: Oboe Concerto 第2楽章 Adagio (D. Dini Ciacci オーボエ)",
+        songUrl: "https://archive.org/download/18-marcello-concerto-per-oboe-adagio/18%20Marcello_%20Concerto%20Per%20Oboe%20Adagio.mp3",
         startOffset: 0,
-        playbackRate: 0.72
+        playbackRate: 1.00
       },
       {
         id: 2,
