@@ -1,6 +1,7 @@
 // PhysioPacer Service Worker (PWA Offline Audio Cache)
-const CACHE_NAME = 'physiopacer-cache-v1';
+const CACHE_NAME = 'physiopacer-cache-v2';
 const ASSETS_TO_CACHE = [
+  './index.html',
   './timer.html',
   './audio/stage1_marcello_adagio.mp3',
   './audio/stage2_carefree.mp3',

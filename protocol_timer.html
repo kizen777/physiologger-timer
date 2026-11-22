@@ -1543,7 +1543,7 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
       ];
 
       if ('caches' in window) {
-        caches.open('physiopacer-cache-v1').then((cache) => {
+        caches.open('physiopacer-cache-v2').then((cache) => {
           Promise.all(audioUrls.map(u => cache.match(u))).then(responses => {
             const cachedCount = responses.filter(r => !!r).length;
             if (cachedCount === audioUrls.length) {
