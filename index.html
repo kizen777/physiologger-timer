@@ -719,8 +719,8 @@
             画面上部で「20代〜70代(古稀)」を選択できます。実年齢の設定で「きつい・無理がある」と感じる場合は、<span class="notice-highlight">無理をせず1〜2段階「上の年代」（例：50代の方が60代・70代設定）</span>に上げて安全域で実施してください。
           </li>
           <li>
-            <strong>負荷モード切替（通常漸増 vs 有酸素リカバリー）：</strong>
-            前日の疲労や睡眠時の副交感神経消耗（朝のRMSSD低下日）、または70代(古稀)の体力維持・リカバリーには<span class="notice-highlight">「有酸素リカバリーモード」</span>が推奨されます。Stage 4の激しいハイニー疾走が無酸素域に突入せず、Stage 3の有酸素ジョグペース（Zone 2）をそのまま維持して安全に心身をリフレッシュします。
+            <strong>負荷モード切替（通常漸増 vs 有酸素性リカバリー）：</strong>
+            前日の疲労や睡眠時の副交感神経消耗（朝のRMSSD低下日）、または70代(古稀)の体力維持・リカバリーには<span class="notice-highlight">「有酸素性リカバリーモード」</span>が推奨されます。Stage 4の激しいハイニー疾走が無酸素域に突入せず、Stage 3の有酸素ジョグペース（Zone 2）をそのまま維持して安全に心身をリフレッシュします。
           </li>
           <li>
             <strong>PhysioLogger との連携：</strong>
@@ -777,7 +777,7 @@
         <div class="mode-label">負荷モード:</div>
         <div class="mode-selector" id="modeSelector">
           <button class="mode-btn active" id="modeStandardBtn" onclick="selectProtocolMode('standard')">🔥 通常漸増 (Stage 4 ハイニー疾走 / LT2)</button>
-          <button class="mode-btn" id="modeRecoveryBtn" onclick="selectProtocolMode('recovery')">🌿 有酸素リカバリー (Stage 4 ジョグ継続 / Zone 2)</button>
+          <button class="mode-btn" id="modeRecoveryBtn" onclick="selectProtocolMode('recovery')">🌿 有酸素性リカバリー (Stage 4 ジョグ継続 / Zone 2)</button>
         </div>
       </div>
 
@@ -926,7 +926,7 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
       },
       recovery: {
         id: 4,
-        name: "有酸素ジョグ継続 / リズム歩行",
+        name: "有酸素性ジョグ継続 / リズム歩行",
         duration: 120,
         rpe: "RPE 11〜12 (Stage 3ペース維持 / Zone 2)",
         theme: "theme-recovery-jog",
