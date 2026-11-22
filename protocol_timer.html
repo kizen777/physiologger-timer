@@ -251,6 +251,20 @@
       border-radius: 20px;
     }
 
+    .cache-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: #86efac;
+      background: rgba(34, 197, 94, 0.16);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      padding: 3px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     .progress-track {
       width: 100%;
       height: 5px;
@@ -828,10 +842,12 @@
         <button class="age-btn" onclick="selectAge(55, this)">50代</button>
         <button class="age-btn" onclick="selectAge(65, this)">60代</button>
         <button class="age-btn active" onclick="selectAge(70, this)">70代(古稀)</button>
+        <button class="age-btn" onclick="selectAge(80, this)">80代</button>
       </div>
       <div class="audio-bar">
         <div class="bgm-info" id="bgmTitleDisplay" onclick="cycleRestCelloTrack()" style="cursor: pointer;" title="タップで安静時曲切替（オーボエ／チェロ）">🎵 BGM: Marcello: Oboe Concerto 第2楽章 Adagio (José Antonio Masmano / タップで曲切替)</div>
         <div class="bgm-controls">
+          <span class="cache-badge" id="offlineCacheBadge">🟢 端末保存済 (全音源オフラインOK)</span>
           <button class="bgm-toggle" id="tempoToggleBtn" onclick="cycleRestTempo()" title="テンポ調整">速度: 1.00x</button>
           <button class="bgm-toggle" id="pacerToggleBtn" onclick="togglePacerBeat()">リズム音: ON</button>
           <button class="bgm-toggle" id="bgmToggleBtn" onclick="toggleBGM()">BGM: ON</button>
@@ -912,45 +928,24 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
     const REST_CELLO_TRACKS = [
       {
         title: "Marcello: Oboe Concerto 第2楽章 Adagio (José Antonio Masmano オーボエ)",
-        url: "./masmano_marcello_adagio.mp3",
-        offset: 0,
-        rate: 1.00
+        url: "./audio/stage1_marcello_adagio.mp3",
+        originalBpm: 72,
+        tempoMode: 'hr',
+        offset: 0
       },
       {
-        title: "Marcello: Oboe Concerto 第2楽章 Adagio (D. Dini Ciacci オーボエ)",
-        url: "https://archive.org/download/18-marcello-concerto-per-oboe-adagio/18%20Marcello_%20Concerto%20Per%20Oboe%20Adagio.mp3",
-        offset: 0,
-        rate: 1.00
-      },
-      {
-        title: "Marcello: Oboe Concerto 第2楽章 Adagio (R. Reversy & Ansermet 1951 PD)",
-        url: "https://archive.org/download/01-helaerts-ansermet-vivaldi-bassoon-conc-in-d-1/05%20Reversy%2C%20Ansermet%20-%20Marcello%20Oboe%20conc%20in%20c%202.mp3",
-        offset: 0,
-        rate: 1.00
-      },
-      {
-        title: "Bach: 無伴奏チェロ組曲第1番 Prelude (John Michel 独奏・0.72x)",
-        url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/43/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg/JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg.mp3",
-        offset: 0,
-        rate: 0.72
-      },
-      {
-        title: "Bach: 無伴奏チェロ組曲第1番 Prelude (Pablo Casals 1939・0.85x)",
-        url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/9/9d/Bach_-_Cello_Suite_no._1_in_G_major%2C_BWV_1007_-_I._Pr%C3%A9lude.ogg/Bach_-_Cello_Suite_no._1_in_G_major%2C_BWV_1007_-_I._Pr%C3%A9lude.ogg.mp3",
-        offset: 0,
-        rate: 0.85
-      },
-      {
-        title: "サン＝サーンス：白鳥 The Swan (John Michel チェロ・0.90x)",
-        url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/db/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg.mp3",
-        offset: 0,
-        rate: 0.90
+        title: "サン＝サーンス：白鳥 The Swan (John Michel チェロ)",
+        url: "./audio/stage6_the_swan.mp3",
+        originalBpm: 70,
+        tempoMode: 'hr',
+        offset: 0
       },
       {
         title: "Albinoni: Oboe Concerto Op.9-2 第2楽章 Adagio (P. Arden-Taylor)",
-        url: "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/da/Albinoni%2C_Concerto_for_Oboe_and_Strings_No._2_in_D_minor%2C_Op._9%2C_II._Adagio.ogg/Albinoni%2C_Concerto_for_Oboe_and_Strings_No._2_in_D_minor%2C_Op._9%2C_II._Adagio.ogg.mp3",
-        offset: 0,
-        rate: 1.00
+        url: "./audio/rest_albinoni_adagio.mp3",
+        originalBpm: 60,
+        tempoMode: 'hr',
+        offset: 0
       }
     ];
     let currentRestTrackIndex = 0;
@@ -966,11 +961,12 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         theme: "theme-sprint",
         hrRatio: [0.85, 0.95],
         baseSpm: 165,
+        originalBpm: 165,
+        tempoMode: 'spm',
         alphaDesc: "α1 ≈ 0.50 (LT2)",
         songTitle: "Movement Proposition",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Movement%20Proposition.mp3",
-        startOffset: 0,
-        playbackRate: 1.0
+        songUrl: "./audio/stage4_movement_proposition.mp3",
+        startOffset: 0
       },
       recovery: {
         id: 4,
@@ -980,11 +976,12 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         theme: "theme-recovery-jog",
         hrRatio: [0.65, 0.75],
         baseSpm: 135,
+        originalBpm: 135,
+        tempoMode: 'spm',
         alphaDesc: "α1 ≈ 0.75〜0.85 (Zone 2)",
         songTitle: "Electro Cabello (有酸素Zone 2継続)",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Electro%20Cabello.mp3",
-        startOffset: 0,
-        playbackRate: 0.95
+        songUrl: "./audio/stage3_electro_cabello.mp3",
+        startOffset: 0
       }
     };
 
@@ -997,11 +994,12 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         theme: "theme-rest",
         hrRatio: [0.40, 0.50],
         baseSpm: 0,
+        originalBpm: 72,
+        tempoMode: 'hr',
         alphaDesc: "α1 > 1.0",
         songTitle: "Marcello: Oboe Concerto 第2楽章 Adagio (José Antonio Masmano オーボエ)",
-        songUrl: "./masmano_marcello_adagio.mp3",
-        startOffset: 0,
-        playbackRate: 1.00
+        songUrl: "./audio/stage1_marcello_adagio.mp3",
+        startOffset: 0
       },
       {
         id: 2,
@@ -1011,11 +1009,12 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         theme: "theme-walk",
         hrRatio: [0.55, 0.65],
         baseSpm: 100,
+        originalBpm: 100,
+        tempoMode: 'spm',
         alphaDesc: "α1 ≈ 0.90",
         songTitle: "Carefree",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Carefree.mp3",
-        startOffset: 1,
-        playbackRate: 1.0
+        songUrl: "./audio/stage2_carefree.mp3",
+        startOffset: 1
       },
       {
         id: 3,
@@ -1025,11 +1024,12 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         theme: "theme-jog",
         hrRatio: [0.70, 0.80],
         baseSpm: 135,
+        originalBpm: 135,
+        tempoMode: 'spm',
         alphaDesc: "α1 ≈ 0.75 (LT1)",
         songTitle: "Electro Cabello",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Electro%20Cabello.mp3",
-        startOffset: 0,
-        playbackRate: 1.0
+        songUrl: "./audio/stage3_electro_cabello.mp3",
+        startOffset: 0
       },
       {
         id: 4,
@@ -1039,11 +1039,12 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         theme: "theme-sprint",
         hrRatio: [0.85, 0.95],
         baseSpm: 165,
+        originalBpm: 165,
+        tempoMode: 'spm',
         alphaDesc: "α1 ≈ 0.50 (LT2)",
         songTitle: "Movement Proposition",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Movement%20Proposition.mp3",
-        startOffset: 0,
-        playbackRate: 1.0
+        songUrl: "./audio/stage4_movement_proposition.mp3",
+        startOffset: 0
       },
       {
         id: 5,
@@ -1053,11 +1054,12 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         theme: "theme-active-rest",
         hrRatio: [0.55, 0.65],
         baseSpm: 85,
+        originalBpm: 85,
+        tempoMode: 'spm',
         alphaDesc: "α1 回復上昇",
         songTitle: "Bossa Antigua",
-        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Bossa%20Antigua.mp3",
-        startOffset: 1,
-        playbackRate: 1.0
+        songUrl: "./audio/stage5_bossa_antigua.mp3",
+        startOffset: 1
       },
       {
         id: 6,
@@ -1067,11 +1069,12 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         theme: "theme-final-rest",
         hrRatio: [0.45, 0.55],
         baseSpm: 0,
+        originalBpm: 70,
+        tempoMode: 'hr',
         alphaDesc: "α1 > 1.0 復帰",
         songTitle: "サン＝サーンス：白鳥 The Swan (John Michel チェロ)",
-        songUrl: "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/db/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg/JOHN_MICHEL_CELLO-SAINT_SAENS_CARNIVAL_OF_ANIMALS_THE_SWAN.ogg.mp3",
-        startOffset: 0,
-        playbackRate: 0.90
+        songUrl: "./audio/stage6_the_swan.mp3",
+        startOffset: 0
       }
     ];
 
@@ -1088,8 +1091,30 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
     const bgmPlayer = document.getElementById('bgmPlayer');
     let currentLoadedUrl = "";
 
+    function getAutoPlaybackRate(phase) {
+      if (!phase) return 1.0;
+      if (phase.tempoMode === 'hr') {
+        // 安静期: 目安HRの中央値にBGMテンポを同期 (70代なら約72bpm、40代なら約80bpm)
+        const hrMax = Math.round(208 - 0.7 * currentAge);
+        const hrLow = Math.round(hrMax * phase.hrRatio[0]);
+        const hrHigh = Math.round(hrMax * phase.hrRatio[1]);
+        const targetHr = Math.round((hrLow + hrHigh) / 2);
+        const baseBpm = phase.originalBpm || 72;
+        const rate = targetHr / baseBpm;
+        return Math.max(0.80, Math.min(1.25, Math.round(rate * 100) / 100));
+      } else {
+        // 運動期: 目標運動ピッチ（SPM）にBGMテンポを同期 (100 / 135 / 165 SPM等)
+        const targetSpm = getTargetSpm(phase);
+        const baseBpm = phase.originalBpm || 100;
+        if (!targetSpm || !baseBpm) return 1.0;
+        const rate = targetSpm / baseBpm;
+        return Math.max(0.80, Math.min(1.25, Math.round(rate * 100) / 100));
+      }
+    }
+
     function applyPlaybackRate(rate) {
-      const r = rate || 1.0;
+      const phase = PROTOCOL[currentPhaseIndex];
+      const r = rate || getAutoPlaybackRate(phase);
       bgmPlayer.preservesPitch = true;
       bgmPlayer.mozPreservesPitch = true;
       bgmPlayer.webkitPreservesPitch = true;
@@ -1097,7 +1122,8 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
       bgmPlayer.defaultPlaybackRate = r;
       const tempoBtn = document.getElementById('tempoToggleBtn');
       if (tempoBtn) {
-        tempoBtn.textContent = `速度: ${r.toFixed(2)}x`;
+        const modeLabel = (phase && phase.tempoMode === 'hr') ? 'HR連動' : 'SPM連動';
+        tempoBtn.textContent = `${modeLabel}: ${r.toFixed(2)}x`;
       }
     }
 
@@ -1153,21 +1179,21 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         bgmPlayer.src = phase.songUrl;
         bgmPlayer.load();
         bgmPlayer.onloadedmetadata = () => {
-          applyPlaybackRate(phase.playbackRate || 1.0);
+          applyPlaybackRate();
           if (phase.startOffset && bgmPlayer.duration > phase.startOffset) {
             bgmPlayer.currentTime = phase.startOffset;
           }
         };
       }
 
-      applyPlaybackRate(phase.playbackRate || 1.0);
+      applyPlaybackRate();
       bgmPlayer.volume = 0.85;
 
       if (isRunning) {
         const playPromise = bgmPlayer.play();
         if (playPromise !== undefined) {
           playPromise.then(() => {
-            applyPlaybackRate(phase.playbackRate || 1.0);
+            applyPlaybackRate();
             titleEl.textContent = `🎻 再生中: ${phase.songTitle}`;
           }).catch(err => {
             console.warn("Audio play warning:", err);
@@ -1180,8 +1206,8 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
     }
 
     bgmPlayer.addEventListener('playing', () => {
+      applyPlaybackRate();
       const phase = PROTOCOL[currentPhaseIndex];
-      applyPlaybackRate(phase.playbackRate || 1.0);
       document.getElementById('bgmTitleDisplay').textContent = `🎻 再生中: ${phase.songTitle}`;
     });
 
@@ -1191,8 +1217,9 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
       const track = REST_CELLO_TRACKS[currentRestTrackIndex];
       PROTOCOL[currentPhaseIndex].songTitle = track.title;
       PROTOCOL[currentPhaseIndex].songUrl = track.url;
-      PROTOCOL[currentPhaseIndex].startOffset = track.offset;
-      PROTOCOL[currentPhaseIndex].playbackRate = track.rate;
+      PROTOCOL[currentPhaseIndex].startOffset = track.offset || 0;
+      PROTOCOL[currentPhaseIndex].originalBpm = track.originalBpm || 72;
+      PROTOCOL[currentPhaseIndex].tempoMode = track.tempoMode || 'hr';
       loadAndPlayPhaseBGM(currentPhaseIndex);
     }
 
@@ -1306,6 +1333,9 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
       currentAge = age;
       document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('active'));
       btnEl.classList.add('active');
+      const phase = PROTOCOL[currentPhaseIndex];
+      const newRate = getAutoPlaybackRate(phase);
+      applyPlaybackRate(newRate);
       updateUI();
       if (isRunning) startPacerLoop();
     }
@@ -1490,7 +1520,51 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
       updateUI();
     }
 
+    // Service Worker 登録 & オフラインキャッシュ確認 (別端末でのローカル保存対応)
+    function initOfflineCache() {
+      const badge = document.getElementById('offlineCacheBadge');
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('[SW] PWA Registered successfully:', reg.scope);
+        }).catch((err) => {
+          console.warn('[SW] Registration notice:', err);
+        });
+      }
+
+      const audioUrls = [
+        './timer.html',
+        './audio/stage1_marcello_adagio.mp3',
+        './audio/stage2_carefree.mp3',
+        './audio/stage3_electro_cabello.mp3',
+        './audio/stage4_movement_proposition.mp3',
+        './audio/stage5_bossa_antigua.mp3',
+        './audio/stage6_the_swan.mp3',
+        './audio/rest_albinoni_adagio.mp3'
+      ];
+
+      if ('caches' in window) {
+        caches.open('physiopacer-cache-v1').then((cache) => {
+          Promise.all(audioUrls.map(u => cache.match(u))).then(responses => {
+            const cachedCount = responses.filter(r => !!r).length;
+            if (cachedCount === audioUrls.length) {
+              if (badge) badge.textContent = '🟢 端末保存済 (全音源オフラインOK)';
+            } else {
+              if (badge) badge.textContent = `⏳ 端末保存中 (${cachedCount}/${audioUrls.length})`;
+              cache.addAll(audioUrls).then(() => {
+                if (badge) badge.textContent = '🟢 端末保存済 (全音源オフラインOK)';
+              }).catch(() => {
+                if (badge) badge.textContent = '⚪ ローカル音源動作中';
+              });
+            }
+          });
+        }).catch(() => {
+          if (badge) badge.textContent = '⚪ ローカル音源動作中';
+        });
+      }
+    }
+
     updateUI();
+    initOfflineCache();
   </script>
 </body>
 </html>
