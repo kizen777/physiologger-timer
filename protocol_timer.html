@@ -6,8 +6,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="PhysioPacer">
-  <link rel="apple-touch-icon" href="icon.png?v=2">
-  <link rel="icon" type="image/png" href="icon.png?v=2">
+  <link rel="apple-touch-icon" href="../_assets/icon.png?v=2">
+  <link rel="icon" type="image/png" href="../_assets/icon.png?v=2">
   <title>PhysioPacer — PhysioLogger Protocol Timer</title>
   <style>
     * {
@@ -273,6 +273,66 @@
       flex-direction: column;
       gap: 6px;
       margin-bottom: 4px;
+    }
+
+    .protocol-mode-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 5px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .mode-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      white-space: nowrap;
+    }
+
+    .mode-selector {
+      display: flex;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.06);
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .mode-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+    }
+
+    .mode-btn.active#modeStandardBtn {
+      background: linear-gradient(135deg, #b91c1c, #ef4444);
+      color: #ffffff;
+      border-color: #f87171;
+      box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35);
+    }
+
+    .mode-btn.active#modeRecoveryBtn {
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+      color: #ffffff;
+      border-color: #2dd4bf;
+      box-shadow: 0 2px 10px rgba(20, 184, 166, 0.35);
     }
 
     .age-selector {
@@ -614,6 +674,11 @@
     body.theme-sprint .phase-badge { background: rgba(239, 68, 68, 0.25); color: #fca5a5; }
     body.theme-sprint .progress-bar { background: #ef4444; }
 
+    body.theme-recovery-jog { background-color: #042f2e; }
+    body.theme-recovery-jog .phase-name { color: #2dd4bf; }
+    body.theme-recovery-jog .phase-badge { background: rgba(45, 212, 191, 0.2); color: #99f6e4; }
+    body.theme-recovery-jog .progress-bar { background: #14b8a6; }
+
     body.theme-active-rest { background-color: #1f2d08; }
     body.theme-active-rest .phase-name { color: #a3e635; }
     body.theme-active-rest .phase-badge { background: rgba(132, 204, 22, 0.2); color: #d9f99d; }
@@ -652,6 +717,10 @@
           <li>
             <strong>年代設定（10歳階級）の調整コツ：</strong>
             画面上部で「20代〜70代(古稀)」を選択できます。実年齢の設定で「きつい・無理がある」と感じる場合は、<span class="notice-highlight">無理をせず1〜2段階「上の年代」（例：50代の方が60代・70代設定）</span>に上げて安全域で実施してください。
+          </li>
+          <li>
+            <strong>負荷モード切替（通常漸増 vs 有酸素リカバリー）：</strong>
+            前日の疲労や睡眠時の副交感神経消耗（朝のRMSSD低下日）、または70代(古稀)の体力維持・リカバリーには<span class="notice-highlight">「有酸素リカバリーモード」</span>が推奨されます。Stage 4の激しいハイニー疾走が無酸素域に突入せず、Stage 3の有酸素ジョグペース（Zone 2）をそのまま維持して安全に心身をリフレッシュします。
           </li>
           <li>
             <strong>PhysioLogger との連携：</strong>
@@ -701,8 +770,17 @@
       <div class="progress-bar" id="progressBar"></div>
     </div>
 
-    <!-- 10歳階級セレクター ＆ BGMコントロール -->
+    <!-- 10歳階級セレクター ＆ 負荷モード ＆ BGMコントロール -->
     <div class="config-bar">
+      <!-- 負荷モード切替バー -->
+      <div class="protocol-mode-bar">
+        <div class="mode-label">負荷モード:</div>
+        <div class="mode-selector" id="modeSelector">
+          <button class="mode-btn active" id="modeStandardBtn" onclick="selectProtocolMode('standard')">🔥 通常漸増 (Stage 4 ハイニー疾走 / LT2)</button>
+          <button class="mode-btn" id="modeRecoveryBtn" onclick="selectProtocolMode('recovery')">🌿 有酸素リカバリー (Stage 4 ジョグ継続 / Zone 2)</button>
+        </div>
+      </div>
+
       <div class="age-selector" id="ageSelector">
         <button class="age-btn" onclick="selectAge(25, this)">20代</button>
         <button class="age-btn" onclick="selectAge(35, this)">30代</button>
@@ -828,6 +906,39 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
       }
     ];
     let currentRestTrackIndex = 0;
+
+    let currentProtocolMode = 'standard'; // 'standard' | 'recovery'
+
+    const STAGE4_CONFIG = {
+      standard: {
+        id: 4,
+        name: "ハイニー疾走",
+        duration: 120,
+        rpe: "RPE 15〜16 (腿上げダッシュ / LT2)",
+        theme: "theme-sprint",
+        hrRatio: [0.85, 0.95],
+        baseSpm: 165,
+        alphaDesc: "α1 ≈ 0.50 (LT2)",
+        songTitle: "Movement Proposition",
+        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Movement%20Proposition.mp3",
+        startOffset: 0,
+        playbackRate: 1.0
+      },
+      recovery: {
+        id: 4,
+        name: "有酸素ジョグ継続 / リズム歩行",
+        duration: 120,
+        rpe: "RPE 11〜12 (Stage 3ペース維持 / Zone 2)",
+        theme: "theme-recovery-jog",
+        hrRatio: [0.65, 0.75],
+        baseSpm: 135,
+        alphaDesc: "α1 ≈ 0.75〜0.85 (Zone 2)",
+        songTitle: "Electro Cabello (有酸素Zone 2継続)",
+        songUrl: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Electro%20Cabello.mp3",
+        startOffset: 0,
+        playbackRate: 0.95
+      }
+    };
 
     const PROTOCOL = [
       {
@@ -1112,6 +1223,35 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         btn.classList.add('off');
         stopPacerLoop();
       }
+    }
+
+    function selectProtocolMode(mode) {
+      if (currentProtocolMode === mode) return;
+      currentProtocolMode = mode;
+
+      const stdBtn = document.getElementById('modeStandardBtn');
+      const recBtn = document.getElementById('modeRecoveryBtn');
+      if (stdBtn && recBtn) {
+        if (mode === 'standard') {
+          stdBtn.classList.add('active');
+          recBtn.classList.remove('active');
+        } else {
+          recBtn.classList.add('active');
+          stdBtn.classList.remove('active');
+        }
+      }
+
+      // PROTOCOL[3] (Stage 4) の設定を上書き更新
+      Object.assign(PROTOCOL[3], STAGE4_CONFIG[mode]);
+
+      // 現在 Stage 4 (index 3) を表示・実行中の場合は即座に反映
+      if (currentPhaseIndex === 3) {
+        if (isRunning) {
+          loadAndPlayPhaseBGM(3);
+          startPacerLoop();
+        }
+      }
+      updateUI();
     }
 
     function selectAge(age, btnEl) {
