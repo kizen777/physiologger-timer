@@ -790,7 +790,7 @@
         <button class="age-btn active" onclick="selectAge(70, this)">70代(古稀)</button>
       </div>
       <div class="audio-bar">
-        <div class="bgm-info" id="bgmTitleDisplay" onclick="cycleRestCelloTrack()" style="cursor: pointer;" title="タップで安静時曲切替（オーボエ／チェロ）">🎵 BGM: Marcello Oboe Concerto 第2楽章 Adagio (タップで曲切替)</div>
+        <div class="bgm-info" id="bgmTitleDisplay" onclick="cycleRestCelloTrack()" style="cursor: pointer;" title="タップで安静時曲切替（オーボエ／チェロ）">🎵 BGM: Marcello: Oboe Concerto 第2楽章 Adagio (José Antonio Masmano / タップで曲切替)</div>
         <div class="bgm-controls">
           <button class="bgm-toggle" id="tempoToggleBtn" onclick="cycleRestTempo()" title="テンポ調整">速度: 1.00x</button>
           <button class="bgm-toggle" id="pacerToggleBtn" onclick="togglePacerBeat()">リズム音: ON</button>
@@ -844,6 +844,8 @@
       Created: 2026-10-15 | ORCID: <a href="https://orcid.org/0009-0001-6935-8794" target="_blank" style="color:#93c5fd;">0009-0001-6935-8794</a><br>
       ※本アプリの無断配布・転載を禁じます。使用に伴う一切の責任は利用者に帰属します。</p>
       <pre>【安静・回復音源 (Stage 1 &amp; 6: Oboe &amp; Cello)】
+• A. Marcello: Oboe Concerto in D minor — II. Adagio
+  (José Antonio Masmano, Oboe; Orquesta Ciudad de Almería, Michael Thomas cond.)
 • A. Marcello: Oboe Concerto in D/C minor — II. Adagio
   (Diego Dini Ciacci, Oboe &amp; Sestetto d'Archi Scaligero / R. Reversy &amp; E. Ansermet 1951 Public Domain)
 • T. Albinoni: Oboe Concerto in D minor, Op. 9 No. 2 — II. Adagio (Paul Arden-Taylor, CC BY-SA)
@@ -868,6 +870,12 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
     let currentRestTempoIndex = 0;
 
     const REST_CELLO_TRACKS = [
+      {
+        title: "Marcello: Oboe Concerto 第2楽章 Adagio (José Antonio Masmano オーボエ)",
+        url: "./masmano_marcello_adagio.mp3",
+        offset: 0,
+        rate: 1.00
+      },
       {
         title: "Marcello: Oboe Concerto 第2楽章 Adagio (D. Dini Ciacci オーボエ)",
         url: "https://archive.org/download/18-marcello-concerto-per-oboe-adagio/18%20Marcello_%20Concerto%20Per%20Oboe%20Adagio.mp3",
@@ -950,8 +958,8 @@ Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0</pre>
         hrRatio: [0.40, 0.50],
         baseSpm: 0,
         alphaDesc: "α1 > 1.0",
-        songTitle: "Marcello: Oboe Concerto 第2楽章 Adagio (D. Dini Ciacci オーボエ)",
-        songUrl: "https://archive.org/download/18-marcello-concerto-per-oboe-adagio/18%20Marcello_%20Concerto%20Per%20Oboe%20Adagio.mp3",
+        songTitle: "Marcello: Oboe Concerto 第2楽章 Adagio (José Antonio Masmano オーボエ)",
+        songUrl: "./masmano_marcello_adagio.mp3",
         startOffset: 0,
         playbackRate: 1.00
       },
