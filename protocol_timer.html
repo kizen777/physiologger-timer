@@ -444,59 +444,61 @@
     }
 
     .phase-badge {
-      font-size: 15px;
-      font-weight: 700;
-      padding: 5px 14px;
+      font-size: clamp(14px, 3.6vw, 18px);
+      font-weight: 800;
+      padding: 6px 16px;
       border-radius: 30px;
       letter-spacing: 0.5px;
       transition: all 0.5s ease;
     }
 
     .phase-name {
-      font-size: clamp(36px, 10vw, 62px);
+      font-size: clamp(42px, 11vw, 76px);
       font-weight: 900;
-      line-height: 1.1;
+      line-height: 1.08;
       margin-bottom: 6px;
       letter-spacing: -0.5px;
-      text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      text-shadow: 0 4px 24px rgba(0,0,0,0.6);
       transition: color 0.5s ease;
     }
 
     .phase-rpe {
-      font-size: clamp(14px, 3.8vw, 19px);
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.85);
-      margin-bottom: 6px;
+      font-size: clamp(18px, 4.6vw, 28px);
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.95);
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
     }
 
     .phase-target-pill {
-      font-size: 13px;
+      font-size: clamp(15px, 3.8vw, 21px);
       font-weight: 700;
       color: #fde68a;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 10px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 16px;
+      border-radius: 24px;
+      margin-bottom: 8px;
       font-variant-numeric: tabular-nums;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
     }
 
     .phase-timer {
-      font-size: clamp(60px, 17vw, 102px);
-      font-weight: 800;
+      font-size: clamp(78px, 21vw, 140px);
+      font-weight: 900;
       font-variant-numeric: tabular-nums;
       letter-spacing: -2px;
-      line-height: 1;
-      margin-bottom: 10px;
-      text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+      line-height: 0.95;
+      margin-bottom: 8px;
+      text-shadow: 0 4px 35px rgba(0,0,0,0.7);
     }
 
     .next-banner {
       width: 100%;
-      max-width: 440px;
-      padding: 10px 16px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1.5px solid rgba(245, 158, 11, 0.5);
+      max-width: 460px;
+      padding: 12px 18px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid rgba(245, 158, 11, 0.6);
       border-radius: 14px;
       display: flex;
       align-items: center;
@@ -504,7 +506,7 @@
       opacity: 0;
       transform: translateY(16px);
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
     }
 
     .next-banner.visible {
@@ -514,28 +516,33 @@
 
     .next-label {
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       color: #f59e0b;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
       margin-bottom: 2px;
     }
 
     .next-title {
-      font-size: 16px;
+      font-size: clamp(16px, 4.2vw, 22px);
       font-weight: 800;
       color: #ffffff;
     }
 
     .next-countdown-badge {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 900;
       font-variant-numeric: tabular-nums;
-      color: #f59e0b;
-      background: rgba(245, 158, 11, 0.15);
+      color: #0f172a;
+      background: #f59e0b;
       padding: 4px 12px;
       border-radius: 10px;
-      min-width: 44px;
+      min-width: 46px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
     }
 
     .countdown-overlay {
@@ -688,6 +695,39 @@
     body.theme-final-rest .phase-name { color: #818cf8; }
     body.theme-final-rest .phase-badge { background: rgba(99, 102, 241, 0.2); color: #c7d2fe; }
     body.theme-final-rest .progress-bar { background: #6366f1; }
+
+    /* 32インチモニター・大画面ディスプレイ・プロジェクター向け視認性最適化 */
+    @media (min-width: 900px) and (min-height: 600px) {
+      .phase-name {
+        font-size: 82px;
+        margin-bottom: 8px;
+      }
+      .phase-rpe {
+        font-size: 30px;
+        margin-bottom: 10px;
+      }
+      .phase-target-pill {
+        font-size: 22px;
+        padding: 8px 24px;
+        margin-bottom: 12px;
+      }
+      .phase-timer {
+        font-size: 156px;
+        margin-bottom: 14px;
+      }
+      .next-banner {
+        max-width: 580px;
+        padding: 14px 22px;
+      }
+      .next-title {
+        font-size: 24px;
+      }
+      .next-countdown-badge {
+        font-size: 32px;
+        min-width: 56px;
+        height: 52px;
+      }
+    }
   </style>
 </head>
 <body class="theme-rest">
